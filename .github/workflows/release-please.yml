@@ -1,0 +1,42 @@
+name: "Release Please (Reusable)"
+
+on:
+  workflow_call:
+    inputs:
+      config-file:
+        type: string
+        required: false
+        default: '.release-please-config.json'
+      manifest-file:
+        type: string
+        required: false
+        default: '.release-please-manifest.json'
+    outputs:
+      releases_created:
+        description: "True if a release was created"
+        value: ${{ jobs.release-please.outputs.releases_created }}
+      tag_name:
+        description: "The tag of the created release"
+        value: ${{ jobs.release-please.outputs.tag_name }}
+      version:
+        description: "The version string of the created release"
+        value: ${{ jobs.release-please.outputs.version }}
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Run Release Please Action
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file }}

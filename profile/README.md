@@ -7,6 +7,7 @@
 ## 🛠️ Open & Source-Available Tools
 
 - **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
+- **[functionless-url-shortener](https://github.com/divmora/functionless-url-shortener)**: High-performance, zero-compute URL shortener and redirect engine on AWS API Gateway and DynamoDB.
 - **[gitlab-fleet-governor](https://github.com/divmora/gitlab-fleet-governor)**: Fleet governance and infrastructure automation for GitLab environments.
 
 ---

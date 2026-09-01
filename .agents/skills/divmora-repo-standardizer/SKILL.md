@@ -191,6 +191,7 @@ jobs:
 ```
 
 ### `.github/workflows/release-please.yml`:
+For Go repositories with GoReleaser:
 ```yaml
 name: Release Please & GoReleaser
 
@@ -208,6 +209,24 @@ jobs:
   release:
     uses: divmora/.github/.github/workflows/go-release.yml@main
     secrets: inherit
+```
+
+For general / infrastructure / non-Go repositories:
+```yaml
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    uses: divmora/.github/.github/workflows/release-please.yml@main
 ```
 
 ### `.github/workflows/semantic-pull-request.yml`:
