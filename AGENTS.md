@@ -52,7 +52,11 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`.github/workflows/semantic-pull-request.yml`**: Semantic PR title linting.
 - [ ] **`.github/workflows/docker-publish.yml`**: Container image compilation and GHCR publishing (if containerized).
 
+### Organization Profile Maintenance
+- [ ] **`profile/README.md` (`divmora/.github`)**: Whenever a new repository is created, open-sourced, or decommissioned, update the project list under **🛠️ Open & Source-Available Tools** in `divmora/.github/profile/README.md` with its title, repository link, and a concise 1-line description.
+
 ---
+
 
 ## 4. Go Project Guidelines
 
