@@ -3,13 +3,13 @@ name: divmora-repo-standardizer
 description: >-
   Standardizes and scaffolds repositories across the DIVMORA Technologies GitHub organization.
   Use this skill when auditing, creating, or refactoring any repository in Divmora to enforce
-  consistent BSL 1.1 licensing, README badges, reusable GitHub workflows, Release Please,
-  GoReleaser, AGENTS.md, CONTRIBUTING.md, and SECURITY.md files.
+  consistent BSL 1.1 licensing, README badges, reusable GitHub workflows (Go, Node, Python, Pages, Docker),
+  Release Please, GoReleaser, AGENTS.md, CONTRIBUTING.md, and SECURITY.md files.
 ---
 
 # Divmora Repository Standardizer Skill
 
-This skill guides AI agents and developers through creating or standardizing repositories within the **DIVMORA Technologies** GitHub organization (`divmora`).
+This skill guides AI agents and developers through creating, standardizing, or auditing repositories within the **DIVMORA Technologies** GitHub organization (`divmora`).
 
 ---
 
@@ -20,7 +20,7 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
 ```
 <repo-root>/
 ├── LICENSE                       # Parameterized BSL 1.1 license
-├── README.md                     # Status badges, architecture, IAM & License sections
+├── README.md                     # Status badges, architecture, config table, IAM & License sections
 ├── AGENTS.md                     # Workspace-specific guidelines & dry-run safety
 ├── CONTRIBUTING.md               # Local dev setup, make targets, conventional commits
 ├── SECURITY.md                   # Supported versions table & security@divmora.com
@@ -30,9 +30,12 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
 ├── .release-please-manifest.json # Version baseline tracker ("0.1.0")
 ├── .goreleaser.yaml              # Multi-arch binary and lambda compilation (for Go)
 └── .github/
+    ├── dependabot.yml            # Automated weekly dependency updates
     └── workflows/
+        ├── ci.yml                # Calls divmora/.github/.github/workflows/{go-ci,node-ci,python-ci}.yml@main
         ├── docker-publish.yml    # Calls divmora/.github/.github/workflows/docker-publish.yml@main
-        ├── release-please.yml    # Calls divmora/.github/.github/workflows/go-release.yml@main
+        ├── pages.yml             # Calls divmora/.github/.github/workflows/pages-deploy.yml@main (if documentation/website)
+        ├── release-please.yml    # Calls divmora/.github/.github/workflows/{go-release,release-please}.yml@main
         └── semantic-pull-request.yml # Calls divmora/.github/.github/workflows/semantic-pr.yml@main
 ```
 
@@ -60,20 +63,22 @@ Place these badges immediately below the `# <Project Title>` header:
 
 ```markdown
 [![Latest Release](https://img.shields.io/github/v/release/divmora/<repo-name>?logo=github)](https://github.com/divmora/<repo-name>/releases)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)
-[![Documentation: DeepWiki](https://img.shields.io/badge/docs-DeepWiki-blue.svg)](https://deepwiki.com/divmora/<repo-name>)
-[![CI/CD](https://github.com/divmora/<repo-name>/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/divmora/<repo-name>/actions)
 [![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)
+[![CI/CD](https://github.com/divmora/<repo-name>/actions/workflows/ci.yml/badge.svg)](https://github.com/divmora/<repo-name>/actions)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-green.svg)](SECURITY.md)
 ```
 
-*(Note: Omit DeepWiki if unavailable for that project; omit Go version for non-Go repositories.)*
+**Language / Runtime Badges:**
+- Go: `[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)`
+- Node: `[![Node Version](https://img.shields.io/node/v/divmora/<package-name>)](package.json)`
+- Python: `[![Python Version](https://img.shields.io/pypi/pyversions/<package-name>)](pyproject.toml)`
+- Documentation (if available): `[![Documentation: DeepWiki](https://img.shields.io/badge/docs-DeepWiki-blue.svg)](<deepwiki-url>)`
 
 ### Required Sections:
-1. **Overview & Features**: What the project does, key capabilities.
-2. **Configuration / Environment Variables**: Table of all configuration variables with examples.
+1. **Overview & Key Features**: What the project does, key architecture and value proposition.
+2. **Configuration / Environment Variables**: Table of all configuration parameters with defaults and examples.
 3. **IAM Permissions (for AWS projects)**: JSON least-privilege policy.
-4. **Development & Building**: Common `make` commands and prerequisites.
+4. **Development & Building**: Common `make` / `pnpm` / `pytest` commands and local prerequisites.
 5. **Community Links**: Direct links to `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (inherited from `.github`), and `SECURITY.md`.
 6. **License & Commercial Use**: Summary of BSL 1.1, non-production evaluation rights, 3-year Apache 2.0 conversion, and commercial contact (`licensing@divmora.com` / `https://divmora.com`).
 
@@ -82,20 +87,26 @@ Place these badges immediately below the `# <Project Title>` header:
 ## 3. `AGENTS.md` Workspace Guidelines
 
 Create an `AGENTS.md` in the project root containing:
-- **Project Architecture Layout**: Map of directories and entrypoints.
-- **Safety & Dry-Run Guarantee**: All destructive or cloud mutating operations **MUST** support dry-run (`approve bool`).
-- **Structured Logging**: Standard Go `log/slog` in JSON format.
+- **Project Architecture Layout**: Map of directories, entrypoints, and core subsystems.
+- **Safety & Dry-Run Guarantee**: Mandatory dry-run mode (`approve bool` or `--no-execute-changeset`) for all mutating operations.
+- **Structured Logging / Error Handling**: Standard library `log/slog` (JSON) for Go, wrapped errors `%w`.
+- **Ecosystem Best Practices**:
+  - Go: `log/slog`, `embed.FS`, Air live-reload, AWS SDK v2 context propagation.
+  - Node/TS: `pnpm`, strict TypeScript, Vite/Vitest, Tailwind CSS dark aesthetic.
+  - Python: `pyproject.toml`, `pytest`, `ruff` linting.
+  - SAM: 100% Functionless direct integrations, VTL mapping, IAM SigV4.
+  - Protobuf: Schema-driven development with Buf (`buf.yaml`), machine-generated `gen/`.
 - **Conventional Commits**: Enforce Conventional Commits specification.
-- **Verification Commands**: Document `make fmt`, `make lint`, `make test`, `make build`.
+- **Verification Commands**: Document verification commands (`make fmt`, `make lint`, `make test`, `make build`).
 
 ---
 
 ## 4. `CONTRIBUTING.md` & `SECURITY.md`
 
 ### `CONTRIBUTING.md`:
-- Document prerequisites (e.g. `Go 1.25+`, `Make`, `Docker`, `golangci-lint`).
+- Document prerequisites (e.g. `Go 1.25+`, `Node.js 20+`, `pnpm 10`, `Python 3.11+`, `Make`, `Docker`).
 - List all available `make` targets.
-- Detail Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`).
+- Detail Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `feat!:`).
 - Document that contributions fall under the project's BSL 1.1 license.
 
 ### `SECURITY.md`:
@@ -107,7 +118,9 @@ Create an `AGENTS.md` in the project root containing:
 
 ## 5. Build Automation (`Makefile`)
 
-Provide standard targets:
+Provide standard targets tailored to the project runtime:
+
+### Go Projects:
 ```makefile
 .PHONY: build clean test test-coverage dev-setup fmt lint lambda-package docker-build
 
@@ -127,16 +140,66 @@ clean:
 	@rm -rf bin/
 ```
 
+### Node.js / TypeScript Projects:
+```makefile
+.PHONY: install build test lint format clean
+
+install:
+	@pnpm install
+
+build:
+	@pnpm build
+
+test:
+	@pnpm test
+
+lint:
+	@pnpm lint
+
+format:
+	@pnpm format
+
+clean:
+	@rm -rf dist node_modules
+```
+
 ---
 
 ## 6. Automated Release Automation
 
 ### `.release-please-config.json`:
+For Go repositories:
 ```json
 {
   "packages": {
     ".": {
       "release-type": "go",
+      "package-name": "<repo-name>",
+      "include-component-in-tag": false
+    }
+  }
+}
+```
+
+For Node.js / TypeScript repositories:
+```json
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "<repo-name>",
+      "include-component-in-tag": false
+    }
+  }
+}
+```
+
+For Python repositories:
+```json
+{
+  "packages": {
+    ".": {
+      "release-type": "python",
       "package-name": "<repo-name>",
       "include-component-in-tag": false
     }
@@ -151,14 +214,63 @@ clean:
 }
 ```
 
-### `.goreleaser.yaml` (for Go repositories):
-Configure binaries for `linux`, `darwin`, and `windows` (`amd64`, `arm64`), Lambda `bootstrap` archives (if applicable), SHA256 `checksums.txt`, and release changelog groups (`✨ Features`, `🐛 Bug Fixes`, `⚡ Performance Improvements`, `🔒 Security Updates`, `♻️ Refactoring`, `📚 Documentation`, `🧪 Testing & QA`, `🔧 Tooling & CI`).
+### `.goreleaser.yaml` (for Go binary/CLI repositories):
+Configure binaries for `linux`, `darwin`, and `windows` (`amd64`, `arm64`), Lambda `bootstrap` archives (if applicable), SHA256 `checksums.txt`, and release changelog groups.
 
 ---
 
 ## 7. Reusable GitHub Workflows
 
 In `.github/workflows/`, replace large boilerplate workflows with thin callers referencing `divmora/.github`:
+
+### `.github/workflows/ci.yml`:
+**For Go:**
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    uses: divmora/.github/.github/workflows/go-ci.yml@main
+```
+
+**For Node.js / TypeScript:**
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    uses: divmora/.github/.github/workflows/node-ci.yml@main
+    with:
+      package-manager: 'pnpm'
+      node-version: '20'
+```
+
+**For Python:**
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    uses: divmora/.github/.github/workflows/python-ci.yml@main
+```
 
 ### `.github/workflows/docker-publish.yml` (if containerized):
 ```yaml
@@ -167,31 +279,37 @@ name: CI/CD
 on:
   push:
     branches: [ "**" ]
-    tags: [ 'v*.*.*' ]
+    tags: [ 'v*.*.*', 'v*' ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-    inputs:
-      sha:
-        description: 'Commit SHA'
-        required: false
-        type: string
-      tag_name:
-        description: 'Tag Name'
-        required: false
-        type: string
 
 jobs:
   ci-cd:
     uses: divmora/.github/.github/workflows/docker-publish.yml@main
     with:
-      sha: ${{ inputs.sha || '' }}
-      tag_name: ${{ inputs.tag_name || '' }}
+      enable-go-quality: true  # set false for Node/Python containers
     secrets: inherit
 ```
 
+### `.github/workflows/pages.yml` (if GitHub Pages documentation or static site):
+```yaml
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: divmora/.github/.github/workflows/pages-deploy.yml@main
+    with:
+      artifact-path: './docs'  # or './dist'
+```
+
 ### `.github/workflows/release-please.yml`:
-For Go repositories with GoReleaser:
+**For Go repositories with GoReleaser:**
 ```yaml
 name: Release Please & GoReleaser
 
@@ -211,7 +329,7 @@ jobs:
     secrets: inherit
 ```
 
-For general / infrastructure / non-Go repositories:
+**For general / Node / Python / SAM repositories:**
 ```yaml
 name: Release Please
 

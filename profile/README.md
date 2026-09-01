@@ -6,9 +6,18 @@
 
 ## 🛠️ Open & Source-Available Tools
 
+- **[agent-skills](https://github.com/divmora/agent-skills)**: Canonical registry and harness for production-grade AI engineering skills and plugins adhering to `agentskills.io`.
 - **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
+- **[cloudflare-smtp-relay](https://github.com/divmora/cloudflare-smtp-relay)**: High-throughput SMTP relay server routing outbound mail through the Cloudflare Email Routing API.
+- **[code-reviewer-ai-agent](https://github.com/divmora/code-reviewer-ai-agent)**: Intelligent multi-VCS AI code review bot featuring AST scope slicing and anti-hallucination analysis.
+- **[divmora-website](https://github.com/divmora/divmora-website)**: Official website, product showcase, and developer portal for DIVMORA Technologies.
 - **[functionless-url-shortener](https://github.com/divmora/functionless-url-shortener)**: High-performance, zero-compute URL shortener and redirect engine on AWS API Gateway and DynamoDB.
 - **[gitlab-fleet-governor](https://github.com/divmora/gitlab-fleet-governor)**: Fleet governance and infrastructure automation for GitLab environments.
+- **[jules-ai-agent](https://github.com/divmora/jules-ai-agent)**: Autonomous repository maintenance and AI coding agent for background task execution.
+- **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
+- **[localharness](https://github.com/divmora/localharness)**: Universal multi-agent orchestration harness and developer desktop GUI for agentic workflows.
+- **[show-and-tell](https://github.com/divmora/show-and-tell)**: Lightweight SDK and media server for automated UI demo recordings and visual regression artifacts.
+- **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
 
 ---
 

@@ -1,0 +1,88 @@
+name: "Deploy GitHub Pages (Reusable)"
+
+on:
+  workflow_call:
+    inputs:
+      artifact-path:
+        type: string
+        required: false
+        default: './docs'
+        description: 'Path of the directory to deploy as static site'
+      build-command:
+        type: string
+        required: false
+        default: ''
+        description: 'Optional build command to execute before uploading artifact (e.g. "npm run build")'
+      node-version:
+        type: string
+        required: false
+        default: '22'
+        description: 'Node.js version (if build command requires Node)'
+      package-manager:
+        type: string
+        required: false
+        default: 'npm'
+        description: 'Package manager to use: npm or pnpm'
+
+jobs:
+  build-and-upload:
+    name: Build & Upload Pages Artifact
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm (if required)
+        if: inputs.build-command != '' && inputs.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js (if build command configured)
+        if: inputs.build-command != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+
+      - name: Install dependencies (if build command configured)
+        if: inputs.build-command != ''
+        run: |
+          if [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          else
+            npm install
+          fi
+
+      - name: Execute Build
+        if: inputs.build-command != ''
+        run: ${{ inputs.build-command }}
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ inputs.artifact-path }}
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -11,10 +11,23 @@ on:
         type: string
         required: false
         default: ${{ github.repository }}
+      enable-go-quality:
+        type: boolean
+        required: false
+        default: true
+        description: 'Run Go linter and unit tests prior to Docker build'
       go-version:
         type: string
         required: false
         default: '1.25'
+      context:
+        type: string
+        required: false
+        default: '.'
+      file:
+        type: string
+        required: false
+        default: 'Dockerfile'
       platforms:
         type: string
         required: false
@@ -31,6 +44,7 @@ on:
 jobs:
   quality:
     name: Code Quality
+    if: inputs.enable-go-quality
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -60,6 +74,7 @@ jobs:
   build-and-push:
     name: Build & Publish Docker
     needs: quality
+    if: always() && (needs.quality.result == 'success' || needs.quality.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -136,7 +151,8 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ${{ inputs.context }}
+          file: ${{ inputs.file }}
           platforms: ${{ inputs.platforms }}
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |

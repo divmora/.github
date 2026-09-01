@@ -1,0 +1,104 @@
+name: "Node.js CI (Reusable)"
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        required: false
+        default: '20'
+        description: 'Node.js version to test against (e.g. "20" or "22")'
+      package-manager:
+        type: string
+        required: false
+        default: 'pnpm'
+        description: 'Package manager: pnpm, npm, or yarn'
+      working-directory:
+        type: string
+        required: false
+        default: '.'
+        description: 'Working directory containing package.json'
+      install-command:
+        type: string
+        required: false
+        default: ''
+        description: 'Custom install command (overrides default for package manager)'
+      lint-command:
+        type: string
+        required: false
+        default: ''
+        description: 'Lint command to run (e.g. "pnpm lint" or "npm run lint")'
+      test-command:
+        type: string
+        required: false
+        default: 'test'
+        description: 'Test script name or custom test command (e.g. "test" or "pnpm test")'
+      build-command:
+        type: string
+        required: false
+        default: ''
+        description: 'Build command to run (e.g. "pnpm build" or "npm run build")'
+      enable-build:
+        type: boolean
+        required: false
+        default: false
+        description: 'Whether to execute the build step after tests'
+
+jobs:
+  test:
+    name: Node.js CI
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm (if pnpm is used)
+        if: inputs.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+          cache-dependency-path: ${{ inputs.working-directory }}/${{ inputs.package-manager == 'pnpm' && 'pnpm-lock.yaml' || inputs.package-manager == 'yarn' && 'yarn.lock' || 'package-lock.json' }}
+
+      - name: Install dependencies
+        run: |
+          if [ -n "${{ inputs.install-command }}" ]; then
+            ${{ inputs.install-command }}
+          elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          elif [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn install --frozen-lockfile
+          else
+            npm ci
+          fi
+
+      - name: Run Linters (if configured)
+        if: inputs.lint-command != ''
+        run: ${{ inputs.lint-command }}
+
+      - name: Run Tests
+        run: |
+          if [[ "${{ inputs.test-command }}" == *" "* ]]; then
+            ${{ inputs.test-command }}
+          elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm ${{ inputs.test-command }}
+          elif [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn ${{ inputs.test-command }}
+          else
+            npm run ${{ inputs.test-command }}
+          fi
+
+      - name: Run Build (if enabled)
+        if: inputs.enable-build && inputs.build-command != ''
+        run: ${{ inputs.build-command }}
