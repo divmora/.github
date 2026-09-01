@@ -11,7 +11,6 @@
 - **[cloudflare-smtp-relay](https://github.com/divmora/cloudflare-smtp-relay)**: High-throughput SMTP relay server routing outbound mail through the Cloudflare Email Routing API.
 - **[cloudformation-staksets](https://github.com/divmora/cloudformation-staksets)**: Curated collection of AWS CloudFormation StackSet templates for multi-account governance, security baseline enforcement, and compliance automation.
 - **[code-reviewer-ai-agent](https://github.com/divmora/code-reviewer-ai-agent)**: Intelligent multi-VCS AI code review bot featuring AST scope slicing and anti-hallucination analysis.
-- **[divmora-website](https://github.com/divmora/divmora-website)**: Official website, product showcase, and developer portal for DIVMORA Technologies.
 - **[functionless-url-shortener](https://github.com/divmora/functionless-url-shortener)**: High-performance, zero-compute URL shortener and redirect engine on AWS API Gateway and DynamoDB.
 - **[gitlab-fleet-governor](https://github.com/divmora/gitlab-fleet-governor)**: Fleet governance and infrastructure automation for GitLab environments.
 - **[jules-ai-agent](https://github.com/divmora/jules-ai-agent)**: Autonomous repository maintenance and AI coding agent for background task execution.
