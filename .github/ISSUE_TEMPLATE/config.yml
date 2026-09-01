@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a Security Vulnerability
+    url: https://github.com/divmora/.github/blob/main/SECURITY.md
+    about: Please report security issues privately to security@divmora.com
+  - name: 💬 Commercial & Enterprise Inquiries
+    url: https://divmora.com
+    about: Contact licensing@divmora.com for production licensing and enterprise support
