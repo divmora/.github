@@ -13,6 +13,11 @@ on:
         required: false
         default: 'pnpm'
         description: 'Package manager: pnpm, npm, or yarn'
+      pnpm-version:
+        type: string
+        required: false
+        default: ''
+        description: 'Optional pnpm version to install (leave empty to auto-detect from package.json packageManager)'
       working-directory:
         type: string
         required: false
@@ -62,7 +67,8 @@ jobs:
         if: inputs.package-manager == 'pnpm'
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: ${{ inputs.pnpm-version || '' }}
+          run_install: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
