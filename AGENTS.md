@@ -62,7 +62,7 @@ Every repository `README.md` must feature standard status badges right below the
 - **Security Policy:** `[![Security Policy](https://img.shields.io/badge/Security-Policy-green.svg)](SECURITY.md)`
 
 ### Organization Profile Maintenance
-- [ ] **`profile/README.md` (`divmora/.github`)**: Whenever a new repository is created, open-sourced, or decommissioned, update the project list under **🛠️ Open & Source-Available Tools** in `divmora/.github/profile/README.md` with its title, repository link, and a concise 1-line description.
+- [ ] **`profile/README.md` (`divmora/.github`)**: Whenever a new repository is created, open-sourced, or decommissioned, update the project list under **🛠️ Open & Source-Available Tools** in `divmora/.github/profile/README.md` with its title, repository link, and a concise 1-line description. Maintain strict alphabetical order (A–Z by repository/project name).
 
 ---
 
