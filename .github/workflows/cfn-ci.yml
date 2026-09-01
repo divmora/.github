@@ -3,11 +3,6 @@ name: "CloudFormation CI (Reusable)"
 on:
   workflow_call:
     inputs:
-      template-paths:
-        type: string
-        required: false
-        default: '**/*.yaml **/*.yml'
-        description: 'Glob pattern for CloudFormation templates to lint'
       python-version:
         type: string
         required: false
@@ -36,4 +31,24 @@ jobs:
 
       - name: Lint CloudFormation Templates
         run: |
-          cfn-lint ${{ inputs.template-paths }} --ignore-templates .github/**
+          python3 -c "
+          import glob, subprocess, sys
+
+          candidates = set(glob.glob('**/*.yaml', recursive=True) + glob.glob('**/*.yml', recursive=True))
+          templates = [
+              f for f in sorted(candidates)
+              if not f.startswith('.github/')
+              and not f.startswith('.tmp/')
+              and not f.startswith('.git/')
+              and not f.startswith('node_modules/')
+              and not f.startswith('.aws-sam/')
+          ]
+
+          if not templates:
+              print('No CloudFormation templates found to lint.')
+              sys.exit(0)
+
+          print(f'Linting {len(templates)} template(s): {templates}')
+          result = subprocess.run(['cfn-lint'] + templates)
+          sys.exit(result.returncode)
+          "
