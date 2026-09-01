@@ -1,0 +1,39 @@
+name: "CloudFormation CI (Reusable)"
+
+on:
+  workflow_call:
+    inputs:
+      template-paths:
+        type: string
+        required: false
+        default: '**/*.yaml **/*.yml'
+        description: 'Glob pattern for CloudFormation templates to lint'
+      python-version:
+        type: string
+        required: false
+        default: '3.12'
+        description: 'Python version for cfn-lint runner'
+
+jobs:
+  validate:
+    name: Lint CloudFormation Templates
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install CloudFormation & YAML Linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install cfn-lint yamllint
+
+      - name: Lint CloudFormation Templates
+        run: |
+          cfn-lint ${{ inputs.template-paths }} --ignore-templates .github/**

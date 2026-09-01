@@ -56,7 +56,7 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`.github/workflows/semantic-pull-request.yml`**: Semantic PR title linting (calling org reusable workflow).
 - [ ] **`.github/workflows/ci.yml`**: Continuous Integration (calling `go-ci.yml`, `node-ci.yml`, or `python-ci.yml`).
 - [ ] **`.github/workflows/docker-publish.yml`**: Container image compilation and GHCR publishing (if containerized).
-- [ ] **`.github/dependabot.yml`**: Dependency update configuration.
+- [ ] **`.github/dependabot.yml`**: Scheduled weekly dependency updates (mandatory per repository; version updates are not inherited from the org `.github` repo).
 
 ### README Standards & Badges
 Every repository `README.md` must feature standard status badges right below the `# <Project Title>` header:
@@ -139,6 +139,7 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 | **`go-ci.yml`** | Go linting (`golangci-lint`) and unit testing. | `uses: divmora/.github/.github/workflows/go-ci.yml@main` |
 | **`node-ci.yml`** | Node.js / TypeScript testing, linting, and building with pnpm/npm caching. | `uses: divmora/.github/.github/workflows/node-ci.yml@main` |
 | **`python-ci.yml`** | Python testing (`pytest`) and linting (`ruff`). | `uses: divmora/.github/.github/workflows/python-ci.yml@main` |
+| **`cfn-ci.yml`** | AWS CloudFormation & StackSet template linting (`cfn-lint`, `yamllint`). | `uses: divmora/.github/.github/workflows/cfn-ci.yml@main` |
 | **`docker-publish.yml`** | Multi-arch Docker image build and GHCR publishing. | `uses: divmora/.github/.github/workflows/docker-publish.yml@main` |
 | **`pages-deploy.yml`** | Static documentation and web app deployment to GitHub Pages. | `uses: divmora/.github/.github/workflows/pages-deploy.yml@main` |
 | **`go-release.yml`** | Release Please + GoReleaser binary release automation for Go. | `uses: divmora/.github/.github/workflows/go-release.yml@main` |

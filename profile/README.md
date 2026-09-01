@@ -9,6 +9,7 @@
 - **[agent-skills](https://github.com/divmora/agent-skills)**: Canonical registry and harness for production-grade AI engineering skills and plugins adhering to `agentskills.io`.
 - **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
 - **[cloudflare-smtp-relay](https://github.com/divmora/cloudflare-smtp-relay)**: High-throughput SMTP relay server routing outbound mail through the Cloudflare Email Routing API.
+- **[cloudformation-staksets](https://github.com/divmora/cloudformation-staksets)**: Curated collection of AWS CloudFormation StackSet templates for multi-account governance, security baseline enforcement, and compliance automation.
 - **[code-reviewer-ai-agent](https://github.com/divmora/code-reviewer-ai-agent)**: Intelligent multi-VCS AI code review bot featuring AST scope slicing and anti-hallucination analysis.
 - **[divmora-website](https://github.com/divmora/divmora-website)**: Official website, product showcase, and developer portal for DIVMORA Technologies.
 - **[functionless-url-shortener](https://github.com/divmora/functionless-url-shortener)**: High-performance, zero-compute URL shortener and redirect engine on AWS API Gateway and DynamoDB.

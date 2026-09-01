@@ -32,7 +32,7 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
 └── .github/
     ├── dependabot.yml            # Automated weekly dependency updates
     └── workflows/
-        ├── ci.yml                # Calls divmora/.github/.github/workflows/{go-ci,node-ci,python-ci}.yml@main
+        ├── ci.yml                # Calls divmora/.github/.github/workflows/{go-ci,node-ci,python-ci,cfn-ci}.yml@main
         ├── docker-publish.yml    # Calls divmora/.github/.github/workflows/docker-publish.yml@main
         ├── pages.yml             # Calls divmora/.github/.github/workflows/pages-deploy.yml@main (if documentation/website)
         ├── release-please.yml    # Calls divmora/.github/.github/workflows/{go-release,release-please}.yml@main
@@ -291,6 +291,21 @@ jobs:
     uses: divmora/.github/.github/workflows/python-ci.yml@main
 ```
 
+**For CloudFormation / StackSets / SAM:**
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    uses: divmora/.github/.github/workflows/cfn-ci.yml@main
+```
+
 ### `.github/workflows/docker-publish.yml` (if containerized):
 ```yaml
 name: CI/CD
@@ -384,9 +399,68 @@ jobs:
 
 ---
 
-## 8. Post-Scaffolding Step: Update Org Profile
+## 8. Dependabot Configuration (`.github/dependabot.yml`)
+
+> [!IMPORTANT]
+> **Repository-Level Requirement**: GitHub **does NOT** inherit `.github/dependabot.yml` from the organization-level `.github` repository for scheduled version updates. While **Dependabot Security Updates and Alerts** can be enabled organization-wide in GitHub Org Settings, scheduled **Dependabot Version Updates** require an explicit `.github/dependabot.yml` in the default branch of every individual repository.
+
+Include standard weekly update schedules with conventional commit prefixes (`chore(scope)`). Configure only the relevant ecosystems for the repository:
+
+```yaml
+version: 2
+updates:
+  # Maintain GitHub Actions dependencies (all repos)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Maintain Go modules (Go repos)
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Maintain npm / pnpm packages (Node/TS repos)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Maintain Python packages (Python repos)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Maintain Docker base images (Docker repos)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+```
+
+---
+
+## 9. Post-Scaffolding Step: Update Org Profile
 
 When the new repository is published to GitHub:
 - Open `divmora/.github/profile/README.md`.
 - Add the project to the **🛠️ Open & Source-Available Tools** section with a concise 1-line description.
 - **Alphabetical Order**: Maintain strict alphabetical order (A–Z by repository/project name) within the tool list.
+
