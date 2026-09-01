@@ -1,16 +1,25 @@
-# DIVMORA Technologies Licensing Policy & Template
+# DIVMORA Technologies Licensing Policy & Templates
 
-**DIVMORA Technologies** adopts the **Business Source License 1.1 (BSL 1.1)** for its core software and developer tooling. 
+**DIVMORA Technologies** maintains a two-tier licensing architecture designed to balance developer freedom, community ecosystem growth, and sustainable enterprise tooling:
 
-This model balances our commitment to open collaboration, developer freedom, and long-term sustainability:
-
-- **Free Non-Production Use:** Free to use, modify, test, and evaluate in all non-production environments (local development, staging, QA, CI/CD automated validation, and proof-of-concept testing).
-- **Commercial Production Use:** Deploying or executing in production environments, embedding into commercial products, or offering as a hosted/managed service requires an active commercial license (EULA) from DIVMORA Technologies.
-- **Open Source Transition:** Each release automatically converts to the **Apache License, Version 2.0** exactly three (3) years after its release date.
+1. **Permissive Open Source (Apache License 2.0):** Applied to developer utilities, adapters, proxies, relays (e.g. `cloudflare-smtp-relay`), SDKs, GitHub Actions, and scaffolding templates where zero-friction community adoption and uninhibited production/commercial use is intended.
+2. **Business Source License 1.1 (BSL 1.1):** Applied to core enterprise platforms, governance systems, and proprietary automation tools where production deployment requires a commercial license (EULA) and converts to Apache 2.0 after three (3) years.
 
 ---
 
-## 1. Licensing FAQ
+## 1. Project Licensing Classification
+
+| License Tier | Applicable Project Types | Commercial / Production Usage | Example Projects |
+|---|---|---|---|
+| **Apache License 2.0** *(Permissive Open Source)* | Developer utilities, SMTP/API relays, client SDKs, CLIs, integrations, middleware, and GitHub Actions. | **100% Free** in any environment (production, commercial, internal, homelabs). **No EULA or payment required.** | `cloudflare-smtp-relay`, developer SDKs, action runners. |
+| **BSL 1.1** *(Source-Available)* | Core enterprise platforms, governance bots, security scanning engines, and proprietary cloud orchestrators. | **Free for non-production use** (local dev, staging, QA, CI/CD). **Requires commercial EULA for production deployments.** | `aws-guardduty-archive-bot`, `gitlab-fleet-governor`. |
+
+---
+
+## 2. Licensing FAQ
+
+### What projects do NOT need a Commercial EULA?
+Any project licensed under **Apache License 2.0** (such as `cloudflare-smtp-relay`, developer toolkits, or client libraries) does not require any commercial license or EULA. You are completely free to deploy, integrate, modify, and run them in any production, SaaS, or commercial setup.
 
 ### What is permitted for free under BSL 1.1?
 - Local development, experimentation, and testing on developer machines.
@@ -18,8 +27,8 @@ This model balances our commitment to open collaboration, developer freedom, and
 - Pre-production environments (staging, sandbox, development VPCs, QA clusters).
 - Security audits, educational usage, and proof-of-concept evaluation.
 
-### What requires a Commercial EULA?
-- Deploying the software in any production AWS account, Kubernetes cluster, or server.
+### What requires a Commercial EULA under BSL 1.1?
+- Deploying the BSL 1.1 software in any production AWS account, Kubernetes cluster, or server.
 - Using the software to manage, audit, or operate live production customer environments.
 - Offering the software (or derivative work) as a paid SaaS, managed service, or hosted offering.
 - Embedding the software into commercial proprietary products.
@@ -29,9 +38,10 @@ Please contact our licensing team at **licensing@divmora.com** or visit **[divmo
 
 ---
 
-## 2. Standard BSL 1.1 Repository License Template
+## 3. Standard BSL 1.1 Repository License Template
 
-When creating a new repository in the **divmora** organization, copy the template below into your repository's root `LICENSE` file and replace `<Repository / Software Name>` with your project's name.
+When creating a new BSL 1.1 repository in the **divmora** organization, copy the template below into your repository's root `LICENSE` file and replace `<Repository / Software Name>` with your project's name.
+
 
 ```text
 Business Source License 1.1

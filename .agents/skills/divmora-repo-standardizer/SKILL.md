@@ -43,16 +43,23 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
 
 ## 1. `LICENSE` File Configuration
 
-Every repository **MUST** contain a root `LICENSE` file based on **Business Source License 1.1 (BSL 1.1)**.
+Every repository **MUST** contain a root `LICENSE` file according to the organization's two-tier licensing policy:
 
-### Action:
-1. Copy the master BSL 1.1 template from `https://github.com/divmora/.github/blob/main/LICENSING.md`.
-2. Fill in the parameters:
-   - **`Licensor`**: `DIVMORA Technologies`
-   - **`Licensed Work`**: `<Project Display Name>, including all source code, documentation, and associated files in this repository.`
-   - **`Additional Use Grant`**: `You may use the Licensed Work free of charge for non-production purposes, including local development, testing, staging, QA, CI/CD automated validation, educational purposes, and proof-of-concept evaluation. You may not deploy or execute the Licensed Work in a production environment, sell, resell, sublicense, or offer the Licensed Work as a commercial product or hosted/managed service without obtaining a separate commercial license (EULA) from the Licensor.`
-   - **`Change Date`**: `Three (3) years from the date of release of the specific version of the Licensed Work.`
-   - **`Change License`**: `Apache License, Version 2.0 (as published by the Apache Software Foundation).`
+### Licensing Tier Selection:
+1. **Tier 1: Permissive Open Source (Apache License 2.0)**
+   - **For:** Developer utilities, relays/proxies (e.g., `cloudflare-smtp-relay`), client SDKs, CLIs, integrations, and GitHub Actions.
+   - **Usage:** 100% free for use in any environment (including commercial, production, and SaaS) without requiring a commercial license (EULA) or payment.
+   - **Action:** Apply the standard **Apache License, Version 2.0** with copyright `Copyright 2026 DIVMORA Technologies`.
+
+2. **Tier 2: Business Source License 1.1 (BSL 1.1)**
+   - **For:** Core enterprise platforms, governance bots, security scanning engines, and proprietary cloud orchestrators.
+   - **Usage:** Free for non-production development/testing/QA; requires commercial EULA from DIVMORA for production deployments; converts to Apache 2.0 after 3 years.
+   - **Action:** Copy the master BSL 1.1 template from `https://github.com/divmora/.github/blob/main/LICENSING.md` and fill in:
+     - **`Licensor`**: `DIVMORA Technologies`
+     - **`Licensed Work`**: `<Project Display Name>, including all source code, documentation, and associated files in this repository.`
+     - **`Additional Use Grant`**: `You may use the Licensed Work free of charge for non-production purposes, including local development, testing, staging, QA, CI/CD automated validation, educational purposes, and proof-of-concept evaluation. You may not deploy or execute the Licensed Work in a production environment, sell, resell, sublicense, or offer the Licensed Work as a commercial product or hosted/managed service without obtaining a separate commercial license (EULA) from the Licensor.`
+     - **`Change Date`**: `Three (3) years from the date of release of the specific version of the Licensed Work.`
+     - **`Change License`**: `Apache License, Version 2.0 (as published by the Apache Software Foundation).`
 
 ---
 
