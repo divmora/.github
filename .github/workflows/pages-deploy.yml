@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup pnpm (if required)
         if: inputs.build-command != '' && inputs.package-manager == 'pnpm'
