@@ -89,7 +89,7 @@ Every repository `README.md` must feature standard status badges right below the
 6. **Live Reloading**: Support live reload during local development using `air` (`.air.toml`).
 
 ### 4.2 Node.js, TypeScript & Modern Frontend
-1. **Package Management**: Prefer `pnpm` (version 9/10) with frozen lockfiles (`pnpm-lock.yaml`) in CI.
+1. **Runtime & Package Management**: Standardize on Node.js 24+. Prefer `pnpm` (version 9/10) with frozen lockfiles (`pnpm-lock.yaml`) in CI.
 2. **Module System**: Maintain clean module boundaries. Use pure ES Modules (`import`/`export`) for modern Vite/React/Next.js projects, or CommonJS (`require`/`module.exports`) only when required by legacy runtimes. Do not mix module syntaxes within the same package.
 3. **Strict TypeScript**: Enable `strict: true` in `tsconfig.json`. Avoid `any` types; prefer explicit interfaces and zod/valibot schemas for API boundaries.
 4. **UI Styling & Theming**: Standardize on Tailwind CSS with dark-mode first design tokens. Use Lucide icons and headless accessible primitives (Radix UI / Shadcn).
@@ -120,6 +120,13 @@ Every repository `README.md` must feature standard status badges right below the
 2. **Anti-Hallucination Directives**: Instruct models that enclosing context lines are read-only reference lines. Evaluate only lines modified by the author.
 3. **Comment Budgeting**: Cap inline PR review comments to the top 10–15 highest-priority findings (High > Medium > Low) to prevent reviewer fatigue. Skip lockfiles (`go.sum`, `pnpm-lock.yaml`) and generated code (`*.pb.go`).
 4. **Duplicate Prevention**: Include review tracking markers (e.g., `<!-- review_sha: <sha> -->`) to prevent duplicate bot comments on re-runs.
+
+### 4.8 Docker & Multi-Architecture Containerization
+1. **Multi-Architecture Support**: All production container images **MUST** build for both `linux/amd64` and `linux/arm64` architectures using Docker Buildx and QEMU.
+2. **Minimal Base Images**: Standardize on minimal, secure base images (e.g., `distroless`, `alpine`, or official slim images). For Go, use multi-stage builds targeting `scratch` or `gcr.io/distroless/static-debian12`. For Node.js/Python, use `-alpine` or `-slim` variants.
+3. **Reproducible Layer Caching**: Leverage GitHub Actions cache backend (`type=gha`) and optimize `Dockerfile` layer ordering (copy dependency manifests `go.mod`/`package.json`/`pyproject.toml` before source code).
+4. **Non-Root User Execution**: Ensure containers execute as an unprivileged non-root user (e.g., `USER 10001:10001` or `USER node`).
+5. **Local Multi-Arch Verification**: Provide `docker-build` and `docker-build-multiarch` Makefile targets using `docker buildx build --platform linux/amd64,linux/arm64`.
 
 ---
 

@@ -111,7 +111,7 @@ Create an `AGENTS.md` in the project root containing:
 ## 4. `CONTRIBUTING.md` & `SECURITY.md`
 
 ### `CONTRIBUTING.md`:
-- Document prerequisites (e.g. `Go 1.25+`, `Node.js 20+`, `pnpm 10`, `Python 3.11+`, `Make`, `Docker`).
+- Document prerequisites (e.g. `Go 1.25+`, `Node.js 24+`, `pnpm 10`, `Python 3.11+`, `Make`, `Docker`).
 - List all available `make` targets.
 - Detail Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `feat!:`).
 - Document that contributions fall under the project's BSL 1.1 license.
@@ -129,7 +129,7 @@ Provide standard targets tailored to the project runtime:
 
 ### Go Projects:
 ```makefile
-.PHONY: build clean test test-coverage dev-setup fmt lint lambda-package docker-build
+.PHONY: build clean test test-coverage dev-setup fmt lint lambda-package docker-build docker-build-multiarch
 
 build:
 	@go build -o bin/<binary-name> ./cmd/...
@@ -145,11 +145,17 @@ lint:
 
 clean:
 	@rm -rf bin/
+
+docker-build:
+	@docker build -t <image-name>:latest .
+
+docker-build-multiarch:
+	@docker buildx build --platform linux/amd64,linux/arm64 -t <image-name>:latest .
 ```
 
 ### Node.js / TypeScript Projects:
 ```makefile
-.PHONY: install build test lint format clean
+.PHONY: install build test lint format clean docker-build docker-build-multiarch
 
 install:
 	@pnpm install
@@ -168,6 +174,12 @@ format:
 
 clean:
 	@rm -rf dist node_modules
+
+docker-build:
+	@docker build -t <image-name>:latest .
+
+docker-build-multiarch:
+	@docker buildx build --platform linux/amd64,linux/arm64 -t <image-name>:latest .
 ```
 
 ---
@@ -261,7 +273,7 @@ jobs:
     uses: divmora/.github/.github/workflows/node-ci.yml@main
     with:
       package-manager: 'pnpm'
-      node-version: '20'
+      node-version: '24'
 ```
 
 **For Python:**

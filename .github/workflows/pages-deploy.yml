@@ -16,7 +16,7 @@ on:
       node-version:
         type: string
         required: false
-        default: '22'
+        default: '24'
         description: 'Node.js version (if build command requires Node)'
       package-manager:
         type: string

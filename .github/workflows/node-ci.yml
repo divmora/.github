@@ -6,8 +6,8 @@ on:
       node-version:
         type: string
         required: false
-        default: '20'
-        description: 'Node.js version to test against (e.g. "20" or "22")'
+        default: '24'
+        description: 'Node.js version to test against (e.g. "24")'
       package-manager:
         type: string
         required: false
@@ -60,7 +60,7 @@ jobs:
 
       - name: Set up pnpm (if pnpm is used)
         if: inputs.package-manager == 'pnpm'
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
