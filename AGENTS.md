@@ -52,10 +52,20 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`.github/workflows/semantic-pull-request.yml`**: Semantic PR title linting.
 - [ ] **`.github/workflows/docker-publish.yml`**: Container image compilation and GHCR publishing (if containerized).
 
+### README Standards & Badges
+Every repository `README.md` must feature standard status badges right below the title:
+- **Latest Release:** `[![Latest Release](https://img.shields.io/github/v/release/divmora/<repo-name>?logo=github)](https://github.com/divmora/<repo-name>/releases)`
+- **License:** `[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)`
+- **CI/CD Status:** `[![CI/CD](https://github.com/divmora/<repo-name>/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/divmora/<repo-name>/actions)`
+- **Go Version:** `[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)` (for Go projects)
+- **DeepWiki / Documentation (if available):** `[![Documentation: DeepWiki](https://img.shields.io/badge/docs-DeepWiki-blue.svg)](<deepwiki-url>)`
+- **Security Policy:** `[![Security Policy](https://img.shields.io/badge/Security-Policy-green.svg)](SECURITY.md)`
+
 ### Organization Profile Maintenance
 - [ ] **`profile/README.md` (`divmora/.github`)**: Whenever a new repository is created, open-sourced, or decommissioned, update the project list under **🛠️ Open & Source-Available Tools** in `divmora/.github/profile/README.md` with its title, repository link, and a concise 1-line description.
 
 ---
+
 
 
 ## 4. Go Project Guidelines
