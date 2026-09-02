@@ -16,6 +16,7 @@
 - **[jules-ai-agent](https://github.com/divmora/jules-ai-agent)**: Autonomous repository maintenance and AI coding agent for background task execution.
 - **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
 - **[localharness](https://github.com/divmora/localharness)**: Universal multi-agent orchestration harness and developer desktop GUI for agentic workflows.
+- **[otel-aws-log-processor](https://github.com/divmora/otel-aws-log-processor)**: High-performance Go Lambda converting AWS ALB, NLB, WAF, and CloudFront logs to OpenTelemetry (OTLP).
 - **[show-and-tell](https://github.com/divmora/show-and-tell)**: Lightweight SDK and media server for automated UI demo recordings and visual regression artifacts.
 - **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
 
