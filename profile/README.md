@@ -17,7 +17,7 @@
 - **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
 - **[localharness](https://github.com/divmora/localharness)**: Universal multi-agent orchestration harness and developer desktop GUI for agentic workflows.
 - **[otel-aws-log-processor](https://github.com/divmora/otel-aws-log-processor)**: High-performance Go Lambda converting AWS ALB, NLB, WAF, and CloudFront logs to OpenTelemetry (OTLP).
-- **[show-and-tell](https://github.com/divmora/show-and-tell)**: Lightweight SDK and media server for automated UI demo recordings and visual regression artifacts.
+- **[show-and-tell](https://github.com/divmora/show-and-tell)**: Standalone JavaScript screen recording SDK with real-time audio mixing, configurable duration limits, and browser reload resilience.
 - **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
 
 ---
