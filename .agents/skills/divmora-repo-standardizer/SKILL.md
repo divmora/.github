@@ -4,7 +4,7 @@ description: >-
   Standardizes and scaffolds repositories across the DIVMORA Technologies GitHub organization.
   Use this skill when auditing, creating, or refactoring any repository in Divmora to enforce
   consistent BSL 1.1 licensing, README badges, reusable GitHub workflows (Go, Node, Python, Pages, Docker),
-  Release Please, GoReleaser, AGENTS.md, CONTRIBUTING.md, and SECURITY.md files.
+  Release Please, GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
 ---
 
 # Divmora Repository Standardizer Skill
@@ -22,6 +22,7 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
 ├── LICENSE                       # Parameterized BSL 1.1 license
 ├── README.md                     # Status badges, architecture, config table, IAM & License sections
 ├── AGENTS.md                     # Workspace-specific guidelines & dry-run safety
+├── ROADMAP.md                    # Living product roadmap (future items to implement/prune)
 ├── CONTRIBUTING.md               # Local dev setup, make targets, conventional commits
 ├── SECURITY.md                   # Supported versions table & security@divmora.com
 ├── Makefile                      # Standardized targets (build, test, fmt, lint, clean)
@@ -104,11 +105,20 @@ Create an `AGENTS.md` in the project root containing:
   - SAM: 100% Functionless direct integrations, VTL mapping, IAM SigV4.
   - Protobuf: Schema-driven development with Buf (`buf.yaml`), machine-generated `gen/`.
 - **Conventional Commits**: Enforce Conventional Commits specification.
+- **Living Product Roadmap**: Enforce `ROADMAP.md` addition and pruning lifecycle.
 - **Verification Commands**: Document verification commands (`make fmt`, `make lint`, `make test`, `make build`).
 
 ---
 
-## 4. `CONTRIBUTING.md` & `SECURITY.md`
+## 4. `ROADMAP.md` Living Product Roadmap
+
+Every core repository maintains a `ROADMAP.md` tracking pending capabilities, optimizations, and technical debt:
+- **Adding Items**: Whenever you or the user identify a capability, optimization, or edge-case improvement for future work, add it to `ROADMAP.md` under the appropriate category.
+- **Removing Items**: Once a feature is fully implemented, verified with tests, and committed, **remove it from `ROADMAP.md`** immediately to keep the roadmap focused on active upcoming tasks.
+
+---
+
+## 5. `CONTRIBUTING.md` & `SECURITY.md`
 
 ### `CONTRIBUTING.md`:
 - Document prerequisites (e.g. `Go 1.25+`, `Node.js 24+`, `pnpm 10`, `Python 3.11+`, `Make`, `Docker`).
@@ -123,7 +133,7 @@ Create an `AGENTS.md` in the project root containing:
 
 ---
 
-## 5. Build Automation (`Makefile`)
+## 6. Build Automation (`Makefile`)
 
 Provide standard targets tailored to the project runtime:
 
@@ -184,7 +194,7 @@ docker-build-multiarch:
 
 ---
 
-## 6. Automated Release Automation
+## 7. Automated Release Automation
 
 ### `.release-please-config.json`:
 For Go repositories:
@@ -238,7 +248,7 @@ Configure binaries for `linux`, `darwin`, and `windows` (`amd64`, `arm64`), Lamb
 
 ---
 
-## 7. Reusable GitHub Workflows
+## 8. Reusable GitHub Workflows
 
 In `.github/workflows/`, replace large boilerplate workflows with thin callers referencing `divmora/.github`:
 
@@ -399,7 +409,7 @@ jobs:
 
 ---
 
-## 8. Dependabot Configuration (`.github/dependabot.yml`)
+## 9. Dependabot Configuration (`.github/dependabot.yml`)
 
 > [!IMPORTANT]
 > **Repository-Level Requirement**: GitHub **does NOT** inherit `.github/dependabot.yml` from the organization-level `.github` repository for scheduled version updates. While **Dependabot Security Updates and Alerts** can be enabled organization-wide in GitHub Org Settings, scheduled **Dependabot Version Updates** require an explicit `.github/dependabot.yml` in the default branch of every individual repository.
@@ -457,7 +467,7 @@ updates:
 
 ---
 
-## 9. Post-Scaffolding Step: Update Org Profile
+## 10. Post-Scaffolding Step: Update Org Profile
 
 When the new repository is published to GitHub:
 - Open `divmora/.github/profile/README.md`.

@@ -20,6 +20,11 @@ All commits and Pull Request titles **MUST** strictly follow the [Conventional C
 - **Keep docs in sync:** When modifying code, tool schemas, CLI flags, or APIs, always update corresponding documentation in `docs/`, `README.md`, and `examples/`. Outdated documentation is treated as a bug.
 - **Single Source of Truth Versioning:** For Go projects, maintain the version constant in source code as `0.0.0-dev` (e.g. `internal/config/config.go`) and let CI/CD inject the actual release version at build time via `-ldflags`.
 
+### Living Product Roadmap Management
+`ROADMAP.md` is the central living document tracking future capabilities, optimizations, and technical debt:
+- **Adding Items**: Whenever you or the user identify a capability, optimization, or edge-case improvement for future work, add it to `ROADMAP.md` under the appropriate category.
+- **Removing Items**: Once a feature is fully implemented, verified with tests, and committed, **remove it from `ROADMAP.md`** immediately to keep the roadmap focused on active upcoming tasks.
+
 ---
 
 ## 2. Licensing Policy (BSL 1.1)
@@ -43,6 +48,7 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`LICENSE`**: Parameterized BSL 1.1 license file.
 - [ ] **`README.md`**: Comprehensive overview, feature list, configuration parameters, IAM policies (if cloud-related), and License summary.
 - [ ] **`AGENTS.md`**: Project-specific architecture, dry-run safety guarantees, and domain logic notes.
+- [ ] **`ROADMAP.md`**: Living product roadmap tracking future capabilities, optimizations, and technical debt (pruned upon completion).
 - [ ] **`CONTRIBUTING.md`**: Local developer prerequisites, make targets, and PR workflow.
 - [ ] **`SECURITY.md`**: Vulnerability disclosure instructions pointing to `security@divmora.com`.
 - [ ] **`Makefile`**: Standard build targets (`build`, `test`, `fmt`, `lint`, `clean`).
