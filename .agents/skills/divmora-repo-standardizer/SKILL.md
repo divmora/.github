@@ -461,6 +461,6 @@ updates:
 
 When the new repository is published to GitHub:
 - Open `divmora/.github/profile/README.md`.
-- Add the project to the **🛠️ Open & Source-Available Tools** section with a concise 1-line description.
-- **Alphabetical Order**: Maintain strict alphabetical order (A–Z by repository/project name) within the tool list.
+- Add the project to the **🛠️ Open & Source-Available Tools** section within its respective functional category with a concise 1-line description.
+- **Alphabetical Order**: Maintain strict alphabetical order (A–Z by repository/project name within each category).
 

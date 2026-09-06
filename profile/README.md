@@ -6,19 +6,31 @@
 
 ## 🛠️ Open & Source-Available Tools
 
+### 🤖 AI Engineering & Autonomous Agents
+
 - **[agent-skills](https://github.com/divmora/agent-skills)**: Canonical registry and harness for production-grade AI engineering skills and plugins adhering to `agentskills.io`.
-- **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
-- **[cloudflare-smtp-relay](https://github.com/divmora/cloudflare-smtp-relay)**: High-throughput SMTP relay server routing outbound mail through the Cloudflare Email Routing API.
-- **[cloudformation-staksets](https://github.com/divmora/cloudformation-staksets)**: Curated collection of AWS CloudFormation StackSet templates for multi-account governance, security baseline enforcement, and compliance automation.
 - **[code-reviewer-ai-agent](https://github.com/divmora/code-reviewer-ai-agent)**: Intelligent multi-VCS AI code review bot featuring AST scope slicing and anti-hallucination analysis.
-- **[functionless-url-shortener](https://github.com/divmora/functionless-url-shortener)**: High-performance, zero-compute URL shortener and redirect engine on AWS API Gateway and DynamoDB.
-- **[gitlab-fleet-governor](https://github.com/divmora/gitlab-fleet-governor)**: Fleet governance and infrastructure automation for GitLab environments.
 - **[jules-ai-agent](https://github.com/divmora/jules-ai-agent)**: Autonomous repository maintenance and AI coding agent for background task execution.
-- **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
 - **[localharness](https://github.com/divmora/localharness)**: Universal multi-agent orchestration harness and developer desktop GUI for agentic workflows.
+- **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
+
+### 🛡️ Cloud Governance & Security Automation
+
+- **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
+- **[cloudformation-staksets](https://github.com/divmora/cloudformation-staksets)**: Curated collection of AWS CloudFormation StackSet templates for multi-account governance, security baseline enforcement, and compliance automation.
+- **[gitlab-fleet-governor](https://github.com/divmora/gitlab-fleet-governor)**: Fleet governance and infrastructure automation for GitLab environments.
+
+### ⚡ Workflow Automation & Serverless Systems
+
+- **[cloudflare-smtp-relay](https://github.com/divmora/cloudflare-smtp-relay)**: High-throughput SMTP relay server routing outbound mail through the Cloudflare Email Routing API.
+- **[functionless-url-shortener](https://github.com/divmora/functionless-url-shortener)**: High-performance, zero-compute URL shortener and redirect engine on AWS API Gateway and DynamoDB.
+- **[owlflow](https://github.com/divmora/owlflow)**: Lightweight, high-performance workflow automation engine in Go with event-driven triggers, DAG execution, dynamic templating, and interactive developer studio.
+
+### 📊 Observability & Developer Tooling
+
+- **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
 - **[otel-aws-log-processor](https://github.com/divmora/otel-aws-log-processor)**: High-performance Go Lambda converting AWS ALB, NLB, WAF, and CloudFront logs to OpenTelemetry (OTLP).
 - **[show-and-tell](https://github.com/divmora/show-and-tell)**: Standalone JavaScript screen recording SDK with real-time audio mixing, configurable duration limits, and browser reload resilience.
-- **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
 
 ---
 
