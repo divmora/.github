@@ -40,6 +40,26 @@ on:
         type: string
         required: false
         default: ''
+      enable-lambda:
+        type: boolean
+        required: false
+        default: false
+        description: 'Build and publish AWS Lambda container image'
+      lambda-file:
+        type: string
+        required: false
+        default: 'Dockerfile.lambda'
+        description: 'Path to the Lambda Dockerfile'
+      lambda-image-name:
+        type: string
+        required: false
+        default: ''
+        description: 'Name of the Lambda Docker image (defaults to <image-name>-lambda)'
+      lambda-platforms:
+        type: string
+        required: false
+        default: 'linux/amd64,linux/arm64'
+        description: 'Target platforms for Lambda Docker image'
 
 jobs:
   quality:
@@ -141,10 +161,13 @@ jobs:
              TAG_REF="${{ inputs.tag_name }}"
              echo "VERSION=${TAG_REF#v}" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            RAW_TAG="${GITHUB_REF#refs/tags/}"
+            echo "VERSION=${RAW_TAG#v}" >> $GITHUB_OUTPUT
           else
             echo "VERSION=${GITHUB_REF#refs/heads/}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           fi
+          echo "COMMIT=${{ inputs.sha || github.sha }}" >> $GITHUB_OUTPUT
+          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
       # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push Docker image
@@ -157,11 +180,124 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             VERSION=${{ steps.version.outputs.VERSION }}
+            GIT_COMMIT=${{ steps.version.outputs.COMMIT }}
+            BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }}
           tags: |
             ${{ steps.meta-prod.outputs.tags }}
             ${{ steps.meta-debug.outputs.tags }}
           labels: |
             ${{ steps.meta-prod.outputs.labels }}
             ${{ steps.meta-debug.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=main
+          cache-to: type=gha,mode=max,scope=main
+
+  build-and-push-lambda:
+    name: Build & Publish Lambda Docker
+    needs: quality
+    if: inputs.enable-lambda && always() && (needs.quality.result == 'success' || needs.quality.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.ref }}
+
+      # Set up QEMU for multi-arch builds
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # Set up Buildx to support cache export
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Login against a Docker registry except on PR
+      - name: Log into registry ${{ inputs.registry }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve Lambda Image Target
+        id: lambda-target
+        run: |
+          if [ -n "${{ inputs.lambda-image-name }}" ]; then
+            echo "image=${{ inputs.registry }}/${{ inputs.lambda-image-name }}" >> $GITHUB_OUTPUT
+            echo "debug_image=${{ inputs.registry }}/${{ inputs.lambda-image-name }}/debug" >> $GITHUB_OUTPUT
+          else
+            echo "image=${{ inputs.registry }}/${{ inputs.image-name }}-lambda" >> $GITHUB_OUTPUT
+            echo "debug_image=${{ inputs.registry }}/${{ inputs.image-name }}-lambda/debug" >> $GITHUB_OUTPUT
+          fi
+
+      # Prod Metadata: Only for Releases (SemVer)
+      - name: Extract Prod Lambda Docker metadata
+        id: meta-prod
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.lambda-target.outputs.image }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=${{ inputs.tag_name }},enable=${{ inputs.tag_name != '' }}
+            type=raw,value=latest,enable=${{ inputs.tag_name != '' }}
+
+      # Debug Metadata: Releases (SemVer) + Branches (Full SHA)
+      - name: Extract Debug Lambda Docker metadata
+        id: meta-debug
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.lambda-target.outputs.debug_image }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=ref,event=branch
+            type=sha,format=long,prefix=
+
+      - name: Debug Tags
+        run: |
+          echo "Prod Lambda Tags:"
+          echo "${{ steps.meta-prod.outputs.tags }}"
+          echo "Debug Lambda Tags:"
+          echo "${{ steps.meta-debug.outputs.tags }}"
+
+      - name: Calculate Version
+        id: version
+        run: |
+          if [[ "${{ inputs.tag_name }}" != "" ]]; then
+             TAG_REF="${{ inputs.tag_name }}"
+             echo "VERSION=${TAG_REF#v}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            RAW_TAG="${GITHUB_REF#refs/tags/}"
+            echo "VERSION=${RAW_TAG#v}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/heads/}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          fi
+          echo "COMMIT=${{ inputs.sha || github.sha }}" >> $GITHUB_OUTPUT
+          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
+      # Build and push Lambda Docker image with Buildx (don't push on PR)
+      - name: Build and push Lambda Docker image
+        id: build-and-push-lambda
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.lambda-file }}
+          platforms: ${{ inputs.lambda-platforms }}
+          push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            VERSION=${{ steps.version.outputs.VERSION }}
+            GIT_COMMIT=${{ steps.version.outputs.COMMIT }}
+            BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }}
+          tags: |
+            ${{ steps.meta-prod.outputs.tags }}
+            ${{ steps.meta-debug.outputs.tags }}
+          labels: |
+            ${{ steps.meta-prod.outputs.labels }}
+            ${{ steps.meta-debug.outputs.labels }}
+          cache-from: type=gha,scope=lambda
+          cache-to: type=gha,mode=max,scope=lambda
