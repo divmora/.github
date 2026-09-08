@@ -18,6 +18,7 @@
 
 - **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
 - **[cloudformation-staksets](https://github.com/divmora/cloudformation-staksets)**: Curated collection of AWS CloudFormation StackSet templates for multi-account governance, security baseline enforcement, and compliance automation.
+- **[cloudformation-templates](https://github.com/divmora/cloudformation-templates)**: Production-ready AWS CloudFormation infrastructure-as-code templates for application and service workloads (Lambda, ECS Fargate, VPCs).
 - **[gitlab-fleet-governor](https://github.com/divmora/gitlab-fleet-governor)**: Fleet governance and infrastructure automation for GitLab environments.
 
 ### ⚡ Workflow Automation & Serverless Systems
