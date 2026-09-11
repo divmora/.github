@@ -23,6 +23,11 @@ on:
         required: false
         default: 'npm'
         description: 'Package manager to use: npm or pnpm'
+      pnpm-version:
+        type: string
+        required: false
+        default: ''
+        description: 'Optional pnpm version to install (leave empty to auto-detect from package.json packageManager)'
 
 jobs:
   build-and-upload:
@@ -41,7 +46,8 @@ jobs:
         if: inputs.build-command != '' && inputs.package-manager == 'pnpm'
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: ${{ inputs.pnpm-version || '' }}
+          run_install: false
 
       - name: Setup Node.js (if build command configured)
         if: inputs.build-command != ''
