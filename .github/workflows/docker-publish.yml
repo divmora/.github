@@ -169,6 +169,35 @@ jobs:
           echo "COMMIT=${{ inputs.sha || github.sha }}" >> $GITHUB_OUTPUT
           echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
+      - name: Set up Go for Release Signing
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != ''
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go-version }}
+          cache: false
+        env:
+          DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
+
+      - name: Compute Cryptographic Release Signature
+        id: release-sig
+        env:
+          DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
+        run: |
+          RELEASE_SIG="none"
+          if [[ -n "$DIVMORA_RELEASE_PRIVATE_KEY" ]] && [ -d "cmd/fleet-license-gen" ]; then
+            go run ./cmd/fleet-license-gen sign-release \
+              --version="${{ steps.version.outputs.VERSION }}" \
+              --commit="${{ steps.version.outputs.COMMIT }}" \
+              --build-date="${{ steps.version.outputs.BUILD_DATE }}" \
+              --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
+              --token-only > /tmp/token.sig 2>/dev/null || true
+            if [ -s /tmp/token.sig ]; then
+              RELEASE_SIG=$(cat /tmp/token.sig)
+              echo "Successfully minted Ed25519 release signature token"
+            fi
+          fi
+          echo "RELEASE_SIG=${RELEASE_SIG}" >> $GITHUB_OUTPUT
+
       # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push Docker image
         id: build-and-push
@@ -182,6 +211,7 @@ jobs:
             VERSION=${{ steps.version.outputs.VERSION }}
             GIT_COMMIT=${{ steps.version.outputs.COMMIT }}
             BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }}
+            RELEASE_SIG=${{ steps.release-sig.outputs.RELEASE_SIG }}
           tags: |
             ${{ steps.meta-prod.outputs.tags }}
             ${{ steps.meta-debug.outputs.tags }}
@@ -280,6 +310,35 @@ jobs:
           echo "COMMIT=${{ inputs.sha || github.sha }}" >> $GITHUB_OUTPUT
           echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
+      - name: Set up Go for Release Signing
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != ''
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go-version }}
+          cache: false
+        env:
+          DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
+
+      - name: Compute Cryptographic Release Signature
+        id: release-sig
+        env:
+          DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
+        run: |
+          RELEASE_SIG="none"
+          if [[ -n "$DIVMORA_RELEASE_PRIVATE_KEY" ]] && [ -d "cmd/fleet-license-gen" ]; then
+            go run ./cmd/fleet-license-gen sign-release \
+              --version="${{ steps.version.outputs.VERSION }}" \
+              --commit="${{ steps.version.outputs.COMMIT }}" \
+              --build-date="${{ steps.version.outputs.BUILD_DATE }}" \
+              --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
+              --token-only > /tmp/token.sig 2>/dev/null || true
+            if [ -s /tmp/token.sig ]; then
+              RELEASE_SIG=$(cat /tmp/token.sig)
+              echo "Successfully minted Ed25519 release signature token"
+            fi
+          fi
+          echo "RELEASE_SIG=${RELEASE_SIG}" >> $GITHUB_OUTPUT
+
       # Build and push Lambda Docker image with Buildx (don't push on PR)
       - name: Build and push Lambda Docker image
         id: build-and-push-lambda
@@ -293,6 +352,7 @@ jobs:
             VERSION=${{ steps.version.outputs.VERSION }}
             GIT_COMMIT=${{ steps.version.outputs.COMMIT }}
             BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }}
+            RELEASE_SIG=${{ steps.release-sig.outputs.RELEASE_SIG }}
           tags: |
             ${{ steps.meta-prod.outputs.tags }}
             ${{ steps.meta-debug.outputs.tags }}
