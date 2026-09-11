@@ -50,6 +50,23 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
+      - name: Pre-Compute Release Signature
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('cmd/fleet-license-gen/**') != ''
+        env:
+          DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          COMMIT=$(git rev-parse HEAD)
+          BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo "Generating cryptographic release signature for version ${VERSION} (${COMMIT})..."
+          go run ./cmd/fleet-license-gen sign-release \
+            --version="${VERSION}" \
+            --commit="${COMMIT}" \
+            --build-date="${BUILD_DATE}" \
+            --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
+            -o ./release.sig
+          echo "RELEASE_SIG=$(cat ./release.sig)" >> $GITHUB_ENV
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -58,3 +75,12 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SIG: ${{ env.RELEASE_SIG }}
+
+      - name: Upload Release Signature Asset
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('./release.sig') != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          gh release upload "${TAG_NAME}" ./release.sig --clobber || true
