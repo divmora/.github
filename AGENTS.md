@@ -73,7 +73,7 @@ Every repository `README.md` must feature standard status badges right below the
   - Go: `[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)`
   - Node: `[![Node Version](https://img.shields.io/node/v/divmora/<package-name>)](package.json)`
   - Python: `[![Python Version](https://img.shields.io/pypi/pyversions/<package-name>)](pyproject.toml)`
-- **Documentation (if available):** `[![Documentation: DeepWiki](https://img.shields.io/badge/docs-DeepWiki-blue.svg)](<deepwiki-url>)`
+- **Documentation (if available):** `[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/divmora/<repo-name>)`
 - **Security Policy:** `[![Security Policy](https://img.shields.io/badge/Security-Policy-green.svg)](SECURITY.md)`
 
 ### Organization Profile Maintenance
