@@ -66,6 +66,8 @@ jobs:
             --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
             -o ./release.sig
           echo "RELEASE_SIG=$(cat ./release.sig)" >> $GITHUB_ENV
+          mkdir -p .git/info
+          echo "release.sig" >> .git/info/exclude
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
