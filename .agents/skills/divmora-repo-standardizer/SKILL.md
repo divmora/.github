@@ -67,20 +67,28 @@ Every repository **MUST** contain a root `LICENSE` file according to the organiz
 ## 2. `README.md` Badges & Structure
 
 ### Standard Badges:
-Place these badges immediately below the `# <Project Title>` header:
+Place these badges immediately below the `# <Project Title>` header in this standard order:
 
 ```markdown
 [![Latest Release](https://img.shields.io/github/v/release/divmora/<repo-name>?logo=github)](https://github.com/divmora/<repo-name>/releases)
 [![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)
 [![CI/CD](https://github.com/divmora/<repo-name>/actions/workflows/ci.yml/badge.svg)](https://github.com/divmora/<repo-name>/actions)
+<!-- Language / Runtime Badge (choose one matching your project ecosystem) -->
+[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/divmora/<repo-name>)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-green.svg)](SECURITY.md)
 ```
+
+**Alternative License Badges:**
+- Permissive Open Source (Tier 1): `[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)`
 
 **Language / Runtime Badges:**
 - Go: `[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)`
 - Node: `[![Node Version](https://img.shields.io/node/v/divmora/<package-name>)](package.json)`
 - Python: `[![Python Version](https://img.shields.io/pypi/pyversions/<package-name>)](pyproject.toml)`
-- Documentation (if available): `[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/divmora/<repo-name>)`
+
+**Documentation Badge (if available):**
+- DeepWiki: `[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/divmora/<repo-name>)`
 
 ### Required Sections:
 1. **Overview & Key Features**: What the project does, key architecture and value proposition.
@@ -317,6 +325,7 @@ jobs:
 ```
 
 ### `.github/workflows/docker-publish.yml` (if containerized):
+**Standard Container:**
 ```yaml
 name: CI/CD
 
@@ -333,6 +342,18 @@ jobs:
     uses: divmora/.github/.github/workflows/docker-publish.yml@main
     with:
       enable-go-quality: true  # set false for Node/Python containers
+    secrets: inherit
+```
+
+**With AWS Lambda Container Publishing:**
+```yaml
+jobs:
+  ci-cd:
+    uses: divmora/.github/.github/workflows/docker-publish.yml@main
+    with:
+      enable-go-quality: true
+      enable-lambda: true
+      lambda-file: 'Dockerfile.lambda'  # optional, defaults to Dockerfile.lambda
     secrets: inherit
 ```
 

@@ -27,15 +27,19 @@ All commits and Pull Request titles **MUST** strictly follow the [Conventional C
 
 ---
 
-## 2. Licensing Policy (BSL 1.1)
+## 2. Licensing Policy (BSL 1.1 & Apache 2.0)
 
-All core Divmora repositories must adopt the **Business Source License 1.1 (BSL 1.1)** unless explicitly requested otherwise:
-- **Parameters:**
-  - `Licensor`: DIVMORA Technologies
-  - `Licensed Work`: `<Project Name>`
-  - `Additional Use Grant`: Free for non-production use (development, staging, QA, CI/CD, evaluation, proof-of-concept). Production deployments and commercial services require an enterprise commercial license (EULA) from DIVMORA Technologies (`licensing@divmora.com`).
-  - `Change Date`: Three (3) years from the release date of the specific version.
-  - `Change License`: Apache License, Version 2.0.
+DIVMORA operates a two-tier licensing model:
+1. **Tier 1: Permissive Open Source (Apache License 2.0)**: For developer utilities, relays/proxies (e.g. `cloudflare-smtp-relay`), client SDKs, CLIs, integrations, and GitHub Actions. Free for use in any environment without requiring a commercial license.
+   - Badge: `[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)`
+2. **Tier 2: Source-Available (Business Source License 1.1)**: Applied to core enterprise platforms, governance bots, security scanning engines, and proprietary cloud orchestrators:
+   - Badge: `[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)`
+   - Parameters:
+     - `Licensor`: DIVMORA Technologies
+     - `Licensed Work`: `<Project Name>`
+     - `Additional Use Grant`: Free for non-production use (development, staging, QA, CI/CD, evaluation, proof-of-concept). Production deployments and commercial services require an enterprise commercial license (EULA) from DIVMORA Technologies (`licensing@divmora.com`).
+     - `Change Date`: Three (3) years from the release date of the specific version.
+     - `Change License`: Apache License, Version 2.0.
 - **Reference:** See [LICENSING.md](https://github.com/divmora/.github/blob/main/LICENSING.md) for the authoritative license template and policy.
 
 ---
@@ -67,7 +71,9 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 ### README Standards & Badges
 Every repository `README.md` must feature standard status badges right below the `# <Project Title>` header:
 - **Latest Release:** `[![Latest Release](https://img.shields.io/github/v/release/divmora/<repo-name>?logo=github)](https://github.com/divmora/<repo-name>/releases)`
-- **License:** `[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)`
+- **License:**
+  - BSL 1.1 (Tier 2): `[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)`
+  - Apache 2.0 (Tier 1): `[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)`
 - **CI/CD Status:** `[![CI/CD](https://github.com/divmora/<repo-name>/actions/workflows/ci.yml/badge.svg)](https://github.com/divmora/<repo-name>/actions)`
 - **Language Version:**
   - Go: `[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)`
