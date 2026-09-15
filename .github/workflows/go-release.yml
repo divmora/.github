@@ -65,7 +65,7 @@ jobs:
           cache: true
 
       - name: Pre-Compute Release Signature
-        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('cmd/fleet-license-gen/**') != ''
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && (hashFiles('cmd/fleet-license-gen/**') != '' || hashFiles('cmd/license-gen/**') != '')
         env:
           DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
           VERSION: ${{ needs.release-please.outputs.version }}
@@ -75,12 +75,21 @@ jobs:
           BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           VERSION="${VERSION:-${TAG_NAME#v}}"
           echo "Generating cryptographic release signature for version ${VERSION} (${COMMIT})..."
-          go run ./cmd/fleet-license-gen sign-release \
-            --version="${VERSION}" \
-            --commit="${COMMIT}" \
-            --build-date="${BUILD_DATE}" \
-            --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
-            -o ./release.sig
+          if [ -d "./cmd/fleet-license-gen" ]; then
+            go run ./cmd/fleet-license-gen sign-release \
+              --version="${VERSION}" \
+              --commit="${COMMIT}" \
+              --build-date="${BUILD_DATE}" \
+              --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
+              -o ./release.sig
+          elif [ -d "./cmd/license-gen" ]; then
+            go run ./cmd/license-gen sign-release \
+              --version="${VERSION}" \
+              --commit="${COMMIT}" \
+              --build-date="${BUILD_DATE}" \
+              --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
+              -o ./release.sig
+          fi
           echo "RELEASE_SIG=$(cat ./release.sig)" >> $GITHUB_ENV
           mkdir -p .git/info
           echo "release.sig" >> .git/info/exclude
