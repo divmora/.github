@@ -30,6 +30,7 @@
 ### 📊 Observability & Developer Tooling
 
 - **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
+- **[license-go](https://github.com/divmora/license-go)**: Unified Go licensing framework, Ed25519 token engine, and administrative CLI across Divmora products.
 - **[otel-aws-log-processor](https://github.com/divmora/otel-aws-log-processor)**: High-performance Go Lambda converting AWS ALB, NLB, WAF, and CloudFront logs to OpenTelemetry (OTLP).
 - **[show-and-tell](https://github.com/divmora/show-and-tell)**: Standalone JavaScript screen recording SDK with real-time audio mixing, configurable duration limits, and browser reload resilience.
 
