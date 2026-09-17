@@ -65,7 +65,7 @@ jobs:
           cache: true
 
       - name: Pre-Compute Release Signature
-        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && (hashFiles('cmd/fleet-license-gen/**') != '' || hashFiles('cmd/license-gen/**') != '')
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != ''
         env:
           DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
           VERSION: ${{ needs.release-please.outputs.version }}
@@ -75,20 +75,39 @@ jobs:
           BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           VERSION="${VERSION:-${TAG_NAME#v}}"
           echo "Generating cryptographic release signature for version ${VERSION} (${COMMIT})..."
-          if [ -d "./cmd/fleet-license-gen" ]; then
-            go run ./cmd/fleet-license-gen sign-release \
-              --version="${VERSION}" \
-              --commit="${COMMIT}" \
-              --build-date="${BUILD_DATE}" \
-              --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
-              -o ./release.sig
-          elif [ -d "./cmd/license-gen" ]; then
-            go run ./cmd/license-gen sign-release \
-              --version="${VERSION}" \
-              --commit="${COMMIT}" \
-              --build-date="${BUILD_DATE}" \
-              --private-key="$DIVMORA_RELEASE_PRIVATE_KEY" \
-              -o ./release.sig
+          go install github.com/divmora/license-go/cmd/license-cli@v1.0.0
+          KEY_FILE=$(mktemp)
+          if [ -f "$DIVMORA_RELEASE_PRIVATE_KEY" ]; then
+            cp "$DIVMORA_RELEASE_PRIVATE_KEY" "$KEY_FILE"
+          else
+            echo "$DIVMORA_RELEASE_PRIVATE_KEY" > "$KEY_FILE"
+          fi
+          PRODUCT="${GITHUB_REPOSITORY#*/}"
+          
+          # Pre-compile host binary if needed for digest computation
+          BINARY_ARG=""
+          if [ -d "./cmd/${PRODUCT}" ]; then
+            mkdir -p bin
+            CGO_ENABLED=0 go build -trimpath -o "./bin/${PRODUCT}" "./cmd/${PRODUCT}" || true
+            if [ -f "./bin/${PRODUCT}" ]; then
+              BINARY_ARG="-binary ./bin/${PRODUCT}"
+            fi
+          elif [ -f "./bin/${PRODUCT}" ]; then
+            BINARY_ARG="-binary ./bin/${PRODUCT}"
+          fi
+          
+          license-cli release sign \
+            -private-key "$KEY_FILE" \
+            -product "$PRODUCT" \
+            -version "$VERSION" \
+            -git-commit "$COMMIT" \
+            -build-date "$BUILD_DATE" \
+            $BINARY_ARG \
+            -out ./release.sig \
+            -armored
+          rm -f "$KEY_FILE"
+          if [ -d "./bin" ]; then
+            cp ./release.sig ./bin/release.sig || true
           fi
           echo "RELEASE_SIG=$(cat ./release.sig)" >> $GITHUB_ENV
           mkdir -p .git/info
