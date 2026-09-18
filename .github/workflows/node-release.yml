@@ -1,0 +1,162 @@
+name: "Release Please & NPM Publish (Reusable)"
+
+on:
+  workflow_call:
+    inputs:
+      config-file:
+        type: string
+        required: false
+        default: '.release-please-config.json'
+        description: 'Release Please config file path'
+      manifest-file:
+        type: string
+        required: false
+        default: '.release-please-manifest.json'
+        description: 'Release Please manifest file path'
+      force-release:
+        type: boolean
+        required: false
+        default: false
+        description: 'Force publish even if release-please did not create a new release'
+      tag-name:
+        type: string
+        required: false
+        default: ''
+        description: 'Explicit tag to check out and publish'
+      version:
+        type: string
+        required: false
+        default: ''
+        description: 'Explicit version string to release'
+      node-version:
+        type: string
+        required: false
+        default: '20'
+        description: 'Node.js version to use'
+      package-manager:
+        type: string
+        required: false
+        default: 'npm'
+        description: 'Package manager: npm, pnpm, or yarn'
+      pnpm-version:
+        type: string
+        required: false
+        default: ''
+        description: 'Optional pnpm version to install'
+      working-directory:
+        type: string
+        required: false
+        default: '.'
+        description: 'Working directory containing package.json'
+      install-command:
+        type: string
+        required: false
+        default: ''
+        description: 'Custom install command (overrides default for package manager)'
+      build-command:
+        type: string
+        required: false
+        default: 'npm run build'
+        description: 'Build command to execute before publishing'
+      publish-command:
+        type: string
+        required: false
+        default: 'npm publish --access public'
+        description: 'Publish command to execute'
+      registry-url:
+        type: string
+        required: false
+        default: 'https://registry.npmjs.org'
+        description: 'Target package registry URL'
+    outputs:
+      releases_created:
+        description: "True if a release was created"
+        value: ${{ jobs.release-please.outputs.releases_created }}
+      tag_name:
+        description: "The tag of the created release"
+        value: ${{ jobs.release-please.outputs.tag_name }}
+      version:
+        description: "The version string of the created release"
+        value: ${{ jobs.release-please.outputs.version }}
+    secrets:
+      NPM_TOKEN:
+        required: false
+        description: 'NPM automation access token for publishing to registry'
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created || inputs.force-release }}
+      tag_name: ${{ steps.release.outputs.tag_name || inputs.tag-name }}
+      version: ${{ steps.release.outputs.version || inputs.version }}
+    steps:
+      - name: Run Release Please Action
+        id: release
+        if: ${{ !inputs.force-release }}
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file }}
+
+  publish:
+    name: Publish to Registry
+    needs: release-please
+    if: ${{ needs.release-please.outputs.releases_created == 'true' || needs.release-please.outputs.releases_created == true }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.tag-name || needs.release-please.outputs.tag_name || '' }}
+
+      - name: Set up pnpm (if pnpm is used)
+        if: inputs.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ inputs.pnpm-version || '' }}
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.registry-url }}
+          cache: ${{ inputs.package-manager }}
+          cache-dependency-path: ${{ inputs.working-directory }}/${{ inputs.package-manager == 'pnpm' && 'pnpm-lock.yaml' || inputs.package-manager == 'yarn' && 'yarn.lock' || 'package-lock.json' }}
+
+      - name: Install dependencies (custom command)
+        if: inputs.install-command != ''
+        run: ${{ inputs.install-command }}
+
+      - name: Install dependencies (pnpm)
+        if: inputs.install-command == '' && inputs.package-manager == 'pnpm'
+        run: pnpm install --frozen-lockfile
+
+      - name: Install dependencies (yarn)
+        if: inputs.install-command == '' && inputs.package-manager == 'yarn'
+        run: yarn install --frozen-lockfile
+
+      - name: Install dependencies (npm)
+        if: inputs.install-command == '' && inputs.package-manager == 'npm'
+        run: npm ci
+
+      - name: Run Build
+        if: inputs.build-command != ''
+        run: ${{ inputs.build-command }}
+
+      - name: Publish Package(s)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.NODE_AUTH_TOKEN || secrets.GITHUB_TOKEN }}
+        run: ${{ inputs.publish-command }}
