@@ -65,7 +65,7 @@ jobs:
           cache: true
 
       - name: Pre-Compute Release Signature
-        if: env.DIVMORA_RELEASE_PRIVATE_KEY != ''
+        if: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY != '' }}
         env:
           DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
           VERSION: ${{ needs.release-please.outputs.version }}
@@ -75,7 +75,11 @@ jobs:
           BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           VERSION="${VERSION:-${TAG_NAME#v}}"
           echo "Generating cryptographic release signature for version ${VERSION} (${COMMIT})..."
-          go install github.com/divmora/license-go/cmd/license-cli@v1.1.0
+          if [ -d "./cmd/license-cli" ]; then
+            go install ./cmd/license-cli
+          else
+            go install github.com/divmora/license-go/cmd/license-cli@latest
+          fi
           KEY_FILE=$(mktemp)
           if [ -f "$DIVMORA_RELEASE_PRIVATE_KEY" ]; then
             cp "$DIVMORA_RELEASE_PRIVATE_KEY" "$KEY_FILE"
@@ -109,7 +113,11 @@ jobs:
           if [ -d "./bin" ]; then
             cp ./release.sig ./bin/release.sig || true
           fi
-          echo "RELEASE_SIG=$(cat ./release.sig)" >> $GITHUB_ENV
+          {
+            echo "RELEASE_SIG<<EOF"
+            cat ./release.sig
+            echo "EOF"
+          } >> "$GITHUB_ENV"
           mkdir -p .git/info
           echo "release.sig" >> .git/info/exclude
 
@@ -124,7 +132,7 @@ jobs:
           RELEASE_SIG: ${{ env.RELEASE_SIG }}
 
       - name: Upload Release Signature Asset
-        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('./release.sig') != ''
+        if: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('./release.sig') != '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
