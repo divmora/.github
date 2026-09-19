@@ -39,7 +39,7 @@ jobs:
       - name: Run Release Please Action
         id: release
         if: ${{ !inputs.force-release }}
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file }}
