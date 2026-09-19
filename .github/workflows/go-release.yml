@@ -51,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -65,7 +67,7 @@ jobs:
           cache: true
 
       - name: Pre-Compute Release Signature
-        if: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY != '' }}
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != ''
         env:
           DIVMORA_RELEASE_PRIVATE_KEY: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY }}
           VERSION: ${{ needs.release-please.outputs.version }}
@@ -132,7 +134,7 @@ jobs:
           RELEASE_SIG: ${{ env.RELEASE_SIG }}
 
       - name: Upload Release Signature Asset
-        if: ${{ secrets.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('./release.sig') != '' }}
+        if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('./release.sig') != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
