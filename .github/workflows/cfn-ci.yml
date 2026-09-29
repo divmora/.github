@@ -8,6 +8,16 @@ on:
         required: false
         default: '3.12'
         description: 'Python version for cfn-lint runner'
+      template-directory:
+        type: string
+        required: false
+        default: ''
+        description: 'Optional directory containing CloudFormation templates'
+      template-pattern:
+        type: string
+        required: false
+        default: ''
+        description: 'Optional glob pattern for CloudFormation templates'
 
 jobs:
   validate:
@@ -32,17 +42,36 @@ jobs:
       - name: Lint CloudFormation Templates
         run: |
           python3 -c "
-          import glob, subprocess, sys
+          import glob, os, subprocess, sys
 
-          candidates = set(glob.glob('**/*.yaml', recursive=True) + glob.glob('**/*.yml', recursive=True))
-          templates = [
-              f for f in sorted(candidates)
-              if not f.startswith('.github/')
-              and not f.startswith('.tmp/')
-              and not f.startswith('.git/')
-              and not f.startswith('node_modules/')
-              and not f.startswith('.aws-sam/')
-          ]
+          template_dir = '${{ inputs.template-directory }}'.strip()
+          template_pattern = '${{ inputs.template-pattern }}'.strip()
+
+          def is_cfn_file(path):
+              try:
+                  with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                      for line in f:
+                          stripped = line.strip()
+                          if stripped.startswith(('AWSTemplateFormatVersion:', 'Resources:', 'Transform:')):
+                              return True
+              except Exception:
+                  pass
+              return False
+
+          if template_pattern:
+              candidates = glob.glob(template_pattern, recursive=True)
+          elif template_dir:
+              candidates = glob.glob(os.path.join(template_dir, '**/*.yaml'), recursive=True) + glob.glob(os.path.join(template_dir, '**/*.yml'), recursive=True)
+          else:
+              all_files = glob.glob('**/*.yaml', recursive=True) + glob.glob('**/*.yml', recursive=True)
+              ignored_prefixes = ('.github/', '.tmp/', '.git/', 'node_modules/', '.aws-sam/', 'dist/', 'build/')
+              candidates = [
+                  f for f in all_files
+                  if not any(f.startswith(p) or f'/{p}' in f for p in ignored_prefixes)
+                  and is_cfn_file(f)
+              ]
+
+          templates = sorted(set(candidates))
 
           if not templates:
               print('No CloudFormation templates found to lint.')
