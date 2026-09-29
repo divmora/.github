@@ -13,6 +13,11 @@ on:
         required: false
         default: ''
         description: 'Optional build command to execute before uploading artifact (e.g. "npm run build")'
+      working-directory:
+        type: string
+        required: false
+        default: '.'
+        description: 'Working directory containing package.json and lockfile'
       node-version:
         type: string
         required: false
@@ -37,6 +42,9 @@ jobs:
       contents: read
       pages: write
       id-token: write
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
 
     steps:
       - name: Checkout Code
@@ -47,6 +55,7 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: ${{ inputs.pnpm-version || '' }}
+          package_json_file: ${{ inputs.working-directory != '.' && format('{0}/package.json', inputs.working-directory) || 'package.json' }}
           run_install: false
 
       - name: Setup Node.js (if build command configured)
@@ -55,12 +64,15 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           cache: ${{ inputs.package-manager }}
+          cache-dependency-path: ${{ inputs.working-directory }}/${{ inputs.package-manager == 'pnpm' && 'pnpm-lock.yaml' || inputs.package-manager == 'yarn' && 'yarn.lock' || 'package-lock.json' }}
 
       - name: Install dependencies (if build command configured)
         if: inputs.build-command != ''
         run: |
           if [ "${{ inputs.package-manager }}" = "pnpm" ]; then
             pnpm install --frozen-lockfile
+          elif [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn install --frozen-lockfile
           else
             npm install
           fi
