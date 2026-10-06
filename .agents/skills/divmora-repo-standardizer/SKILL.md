@@ -27,6 +27,7 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
 ├── SECURITY.md                   # Supported versions table & security@divmora.com
 ├── Makefile                      # Standardized targets (build, test, fmt, lint, clean)
 ├── .gitignore                    # Standard language ignore rules
+├── .dockerignore                 # Docker build context exclusions (if containerized)
 ├── .release-please-config.json   # Package config for Release Please
 ├── .release-please-manifest.json # Version baseline tracker ("0.1.0")
 ├── .goreleaser.yaml              # Multi-arch binary and lambda compilation (for Go)
@@ -356,6 +357,42 @@ jobs:
       enable-lambda: true
       lambda-file: 'Dockerfile.lambda'  # optional, defaults to Dockerfile.lambda
     secrets: inherit
+```
+
+### Docker Build Context Exclusion (`.dockerignore`):
+Every repository containing a `Dockerfile` **MUST** include a root `.dockerignore` to optimize build context transfer speeds, maintain cache efficiency, and prevent accidental secret/credential leakage:
+
+```dockerignore
+# Git & CI/CD
+.git
+.gitignore
+.github
+
+# Documentation & Specifications
+*.md
+
+# Secrets & Environment
+.env*
+*.pem
+*.key
+
+# Build outputs & caches
+bin/
+dist/
+tmp/
+node_modules/
+vendor/
+target/
+
+# Testing & Coverage
+coverage/
+*.cov
+*.test
+
+# IDE & OS Artifacts
+.idea/
+.vscode/
+.DS_Store
 ```
 
 ### `.github/workflows/pages.yml` (if GitHub Pages documentation or static site):

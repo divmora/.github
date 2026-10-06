@@ -58,6 +58,7 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`SECURITY.md`**: Vulnerability disclosure instructions pointing to `security@divmora.com`.
 - [ ] **`Makefile`**: Standard build targets (`build`, `test`, `fmt`, `lint`, `clean`).
 - [ ] **`.gitignore`**: Standard ignore rules for the language runtime (Go, TypeScript, Python, Rust, etc.).
+- [ ] **`.dockerignore`**: Docker build context exclusions (mandatory for containerized repositories).
 
 ### Release & CI/CD Automation
 - [ ] **`.release-please-config.json`**: Package configuration for Google Release Please.
@@ -140,6 +141,7 @@ Every repository `README.md` must feature standard status badges right below the
 3. **Reproducible Layer Caching**: Leverage GitHub Actions cache backend (`type=gha`) and optimize `Dockerfile` layer ordering (copy dependency manifests `go.mod`/`package.json`/`pyproject.toml` before source code).
 4. **Non-Root User Execution**: Ensure containers execute as an unprivileged non-root user (e.g., `USER 10001:10001` or `USER node`).
 5. **Local Multi-Arch Verification**: Provide `docker-build` and `docker-build-multiarch` Makefile targets using `docker buildx build --platform linux/amd64,linux/arm64`.
+6. **Build Context Optimization (`.dockerignore`)**: Every repository containing a `Dockerfile` **MUST** maintain a root `.dockerignore` file. It must explicitly exclude unnecessary files and directories from the Docker build context (e.g., `.git/`, `.github/`, `*.md`, test files/suites, local build artifacts `bin/`, temporary caches, local credentials/`.env*`, and IDE configs) to ensure fast build transfer speeds, avoid cache busts, and prevent accidental secret/credential leakage.
 
 ---
 
