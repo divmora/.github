@@ -29,6 +29,7 @@
 
 ### 📊 Observability & Developer Tooling
 
+- **[aws-das-processor](https://github.com/divmora/aws-das-processor)**: High-performance Go AWS Lambda decrypting, filtering, and converting AWS RDS Database Activity Streams (DAS) into Parquet in S3.
 - **[laravel-periscope](https://github.com/divmora/laravel-periscope)**: High-performance telemetry, request monitoring, and observability lakehouse for Laravel applications.
 - **[license-go](https://github.com/divmora/license-go)**: Unified Go licensing framework, Ed25519 token engine, and administrative CLI across Divmora products.
 - **[otel-aws-log-processor](https://github.com/divmora/otel-aws-log-processor)**: High-performance Go Lambda converting AWS ALB, NLB, WAF, and CloudFront logs to OpenTelemetry (OTLP).
