@@ -69,6 +69,7 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`.github/workflows/ci.yml`**: Continuous Integration (calling `go-ci.yml`, `node-ci.yml`, or `python-ci.yml`).
 - [ ] **`.github/workflows/docker-publish.yml`**: Container image compilation and GHCR publishing (if containerized).
 - [ ] **`.github/dependabot.yml`**: Scheduled weekly dependency updates (mandatory per repository; version updates are not inherited from the org `.github` repo).
+- [ ] **Dependency Graph & Vulnerability Alerts**: Ensure Dependency Graph, Vulnerability Alerts, and Dependabot automated security fixes are enabled (mandatory explicit activation for private repos via `gh api -X PUT /repos/divmora/<repo-name>/vulnerability-alerts` and `gh api -X PUT /repos/divmora/<repo-name>/automated-security-fixes`).
 
 ### README Standards & Badges
 Every repository `README.md` must feature standard status badges right below the `# <Project Title>` header:

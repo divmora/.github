@@ -4,7 +4,8 @@ description: >-
   Standardizes and scaffolds repositories across the DIVMORA Technologies GitHub organization.
   Use this skill when auditing, creating, or refactoring any repository in Divmora to enforce
   consistent BSL 1.1 licensing, README badges, reusable GitHub workflows (Go, Node, Python, Pages, Docker),
-  Release Please, GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
+  Dependency Graph, Dependabot alerts & security updates, Release Please, GoReleaser, AGENTS.md,
+  ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
 ---
 
 # Divmora Repository Standardizer Skill
@@ -468,7 +469,28 @@ jobs:
 
 ---
 
-## 9. Dependabot Configuration (`.github/dependabot.yml`)
+## 9. Dependency Graph & Dependabot Configuration
+
+### 9.1 Dependency Graph, Vulnerability Alerts & Automated Security Fixes
+
+GitHub's **Dependency Graph** analyzes all package manifests and lockfiles in a repository to generate the Software Bill of Materials (SBOM) and power automated vulnerability alerts and security fixes:
+- **Public Repositories**: Dependency Graph and Dependabot alerts are enabled automatically by GitHub upon creation.
+- **Private Repositories**: Due to code privacy controls, GitHub requires explicit activation for private repositories. When standardizing or scaffolding any repository, verify and activate Dependency Graph, Vulnerability Alerts, and Dependabot Automated Security Fixes.
+- **Organization-Level Defaults**: The `divmora` organization is configured to enable Dependency Graph, Dependabot Alerts, and Dependabot Security Updates automatically for all new repositories (`dependency_graph_enabled_for_new_repositories=true`, `dependabot_alerts_enabled_for_new_repositories=true`, `dependabot_security_updates_enabled_for_new_repositories=true`).
+
+#### Programmatic Enablement & Verification CLI:
+```bash
+# 1. Enable Vulnerability Alerts (which automatically activates the Dependency Graph)
+gh api -X PUT /repos/divmora/<repo-name>/vulnerability-alerts
+
+# 2. Enable Dependabot Automated Security Fixes (automated security PRs for CVEs)
+gh api -X PUT /repos/divmora/<repo-name>/automated-security-fixes
+
+# 3. Verify Dependency Graph SBOM generation
+gh api /repos/divmora/<repo-name>/dependency-graph/sbom --jq '.sbom.name'
+```
+
+### 9.2 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
 
 > [!IMPORTANT]
 > **Repository-Level Requirement**: GitHub **does NOT** inherit `.github/dependabot.yml` from the organization-level `.github` repository for scheduled version updates. While **Dependabot Security Updates and Alerts** can be enabled organization-wide in GitHub Org Settings, scheduled **Dependabot Version Updates** require an explicit `.github/dependabot.yml` in the default branch of every individual repository.
