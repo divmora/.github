@@ -4,8 +4,8 @@ description: >-
   Standardizes and scaffolds repositories across the DIVMORA Technologies GitHub organization.
   Use this skill when auditing, creating, or refactoring any repository in Divmora to enforce
   consistent BSL 1.1 licensing, README badges, reusable GitHub workflows (Go, Node, Python, Pages, Docker),
-  Dependency Graph, Dependabot alerts & security updates, Release Please, GoReleaser, AGENTS.md,
-  ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
+  Dependency Graph, Private Vulnerability Reporting, Dependabot alerts & security updates, Release Please,
+  GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
 ---
 
 # Divmora Repository Standardizer Skill
@@ -469,7 +469,7 @@ jobs:
 
 ---
 
-## 9. Dependency Graph & Dependabot Configuration
+## 9. Dependency Graph, Vulnerability Reporting & Dependabot Configuration
 
 ### 9.1 Dependency Graph, Vulnerability Alerts & Automated Security Fixes
 
@@ -490,7 +490,23 @@ gh api -X PUT /repos/divmora/<repo-name>/automated-security-fixes
 gh api /repos/divmora/<repo-name>/dependency-graph/sbom --jq '.sbom.name'
 ```
 
-### 9.2 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
+### 9.2 Private Vulnerability Reporting (PVR)
+
+GitHub's **Private Vulnerability Reporting** enables security researchers and external community members to report potential security vulnerabilities privately and directly to repository maintainers via the GitHub Security tab, avoiding public disclosure before a coordinated patch is available:
+- **Public Repositories**: Mandatory for all public open-source repositories across `divmora`.
+- **Private Repositories**: Not applicable (GitHub restricts external PVR to public repositories).
+- **Security Policy Alignment**: Aligns with the organization's [`SECURITY.md`](https://github.com/divmora/.github/blob/main/SECURITY.md) responsible disclosure workflow.
+
+#### Programmatic Enablement & Verification CLI:
+```bash
+# 1. Enable Private Vulnerability Reporting
+gh api -X PUT /repos/divmora/<repo-name>/private-vulnerability-reporting
+
+# 2. Verify Private Vulnerability Reporting status (returns {"enabled": true})
+gh api /repos/divmora/<repo-name>/private-vulnerability-reporting --jq '.enabled'
+```
+
+### 9.3 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
 
 > [!IMPORTANT]
 > **Repository-Level Requirement**: GitHub **does NOT** inherit `.github/dependabot.yml` from the organization-level `.github` repository for scheduled version updates. While **Dependabot Security Updates and Alerts** can be enabled organization-wide in GitHub Org Settings, scheduled **Dependabot Version Updates** require an explicit `.github/dependabot.yml` in the default branch of every individual repository.
