@@ -4,8 +4,8 @@ description: >-
   Standardizes and scaffolds repositories across the DIVMORA Technologies GitHub organization.
   Use this skill when auditing, creating, or refactoring any repository in Divmora to enforce
   consistent BSL 1.1 licensing, README badges, reusable GitHub workflows (Go, Node, Python, Pages, Docker),
-  Dependency Graph, Private Vulnerability Reporting, CodeQL default setup, Dependabot alerts & security updates,
-  Release Please, GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
+  Dependency Graph, Private Vulnerability Reporting, CodeQL default setup, Secret Scanning alerts & push protection,
+  Dependabot alerts & security updates, Release Please, GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
 ---
 
 # Divmora Repository Standardizer Skill
@@ -524,7 +524,28 @@ gh api -X PATCH /repos/divmora/<repo-name>/code-scanning/default-setup \
 gh api /repos/divmora/<repo-name>/code-scanning/default-setup --jq '.state'
 ```
 
-### 9.4 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
+### 9.4 Secret Scanning Alerts & Push Protection
+
+GitHub's **Secret Scanning** inspects repositories for known token formats, private keys, and cloud credentials (AWS, GCP, Azure, Slack, GitHub tokens, etc.) across 200+ partner patterns:
+- **Secret Scanning Alerts**: Detects exposed secrets in commit history and alerts repository administrators.
+- **Push Protection**: Proactively blocks developers and CI bots from pushing commits containing supported secrets to GitHub remotes.
+- **Public Repositories**: Free and enabled across all public repositories in `divmora`.
+- **Private Repositories**: Gated by GitHub Advanced Security (GHAS) enterprise licensing.
+- **Organization-Level Defaults**: The `divmora` organization is configured to enable Secret Scanning and Push Protection automatically for all new repositories (`secret_scanning_enabled_for_new_repositories=true`, `secret_scanning_push_protection_enabled_for_new_repositories=true`).
+
+#### Programmatic Enablement & Verification CLI:
+```bash
+# 1. Enable Secret Scanning and Push Protection
+gh api -X PATCH repos/divmora/<repo-name> \
+  -H "Accept: application/vnd.github+json" \
+  -f "security_and_analysis[secret_scanning][status]=enabled" \
+  -f "security_and_analysis[secret_scanning_push_protection][status]=enabled"
+
+# 2. Verify Secret Scanning status (returns "enabled")
+gh api repos/divmora/<repo-name> --jq '.security_and_analysis.secret_scanning.status'
+```
+
+### 9.5 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
 
 > [!IMPORTANT]
 > **Repository-Level Requirement**: GitHub **does NOT** inherit `.github/dependabot.yml` from the organization-level `.github` repository for scheduled version updates. While **Dependabot Security Updates and Alerts** can be enabled organization-wide in GitHub Org Settings, scheduled **Dependabot Version Updates** require an explicit `.github/dependabot.yml` in the default branch of every individual repository.
