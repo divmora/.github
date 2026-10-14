@@ -4,8 +4,8 @@ description: >-
   Standardizes and scaffolds repositories across the DIVMORA Technologies GitHub organization.
   Use this skill when auditing, creating, or refactoring any repository in Divmora to enforce
   consistent BSL 1.1 licensing, README badges, reusable GitHub workflows (Go, Node, Python, Pages, Docker),
-  Dependency Graph, Private Vulnerability Reporting, Dependabot alerts & security updates, Release Please,
-  GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
+  Dependency Graph, Private Vulnerability Reporting, CodeQL default setup, Dependabot alerts & security updates,
+  Release Please, GoReleaser, AGENTS.md, ROADMAP.md, CONTRIBUTING.md, and SECURITY.md files.
 ---
 
 # Divmora Repository Standardizer Skill
@@ -506,7 +506,25 @@ gh api -X PUT /repos/divmora/<repo-name>/private-vulnerability-reporting
 gh api /repos/divmora/<repo-name>/private-vulnerability-reporting --jq '.enabled'
 ```
 
-### 9.3 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
+### 9.3 CodeQL Analysis (Default Setup)
+
+GitHub's **CodeQL** provides automated semantic code analysis (SAST) to detect security vulnerabilities (SQL injection, XSS, insecure deserialization, workflow command injection, etc.) across supported languages (Go, TypeScript/JavaScript, Python, C/C++, Java, GitHub Actions):
+- **Public Repositories**: 100% free and automated via **Default Setup** without requiring custom `.github/workflows/codeql.yml` workflow maintenance.
+- **Private Repositories**: Gated by GitHub Advanced Security (GHAS) enterprise licensing.
+- **Query Suite Standard**: Standardize on the `"default"` query suite for reliable, high-signal security scanning.
+
+#### Programmatic Enablement & Verification CLI:
+```bash
+# 1. Enable CodeQL default setup with default query suite
+gh api -X PATCH /repos/divmora/<repo-name>/code-scanning/default-setup \
+  -f state=configured \
+  -f query_suite=default
+
+# 2. Verify CodeQL default setup configuration status (returns "configured")
+gh api /repos/divmora/<repo-name>/code-scanning/default-setup --jq '.state'
+```
+
+### 9.4 Scheduled Dependabot Version Updates (`.github/dependabot.yml`)
 
 > [!IMPORTANT]
 > **Repository-Level Requirement**: GitHub **does NOT** inherit `.github/dependabot.yml` from the organization-level `.github` repository for scheduled version updates. While **Dependabot Security Updates and Alerts** can be enabled organization-wide in GitHub Org Settings, scheduled **Dependabot Version Updates** require an explicit `.github/dependabot.yml` in the default branch of every individual repository.
