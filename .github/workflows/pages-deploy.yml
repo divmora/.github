@@ -52,7 +52,7 @@ jobs:
 
       - name: Setup pnpm (if required)
         if: inputs.build-command != '' && inputs.package-manager == 'pnpm'
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: ${{ inputs.pnpm-version || '' }}
           package_json_file: ${{ inputs.working-directory }}/package.json
