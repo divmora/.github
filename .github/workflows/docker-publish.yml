@@ -75,13 +75,13 @@ jobs:
           ref: ${{ inputs.sha || github.ref }}
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: ${{ inputs.go-version }}
           cache: true
 
       - name: Run Linters
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
           version: latest
           install-mode: goinstall
@@ -171,7 +171,7 @@ jobs:
 
       - name: Set up Go for Release Signing
         if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('cmd/fleet-license-gen/**') != ''
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: ${{ inputs.go-version }}
           cache: false
@@ -312,7 +312,7 @@ jobs:
 
       - name: Set up Go for Release Signing
         if: env.DIVMORA_RELEASE_PRIVATE_KEY != '' && hashFiles('cmd/fleet-license-gen/**') != ''
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: ${{ inputs.go-version }}
           cache: false
