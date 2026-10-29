@@ -16,6 +16,7 @@
 
 ### 🛡️ Cloud Governance & Security Automation
 
+- **[authpin](https://github.com/divmora/authpin)**: Standalone, encrypted-at-rest OTP generation and blind verification service with pluggable database adapters and multi-channel dispatch.
 - **[aws-guardduty-archive-bot](https://github.com/divmora/aws-guardduty-archive-bot)**: Automated Amazon GuardDuty security findings archival & organization management bot.
 - **[cloudformation-staksets](https://github.com/divmora/cloudformation-staksets)**: Curated collection of AWS CloudFormation StackSet templates for multi-account governance, security baseline enforcement, and compliance automation.
 - **[cloudformation-templates](https://github.com/divmora/cloudformation-templates)**: Production-ready AWS CloudFormation infrastructure-as-code templates for application and service workloads (Lambda, ECS Fargate, VPCs).
