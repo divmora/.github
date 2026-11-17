@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Dependabot handles actions, gomod, npm, pip and docker here. Renovate covers only values Dependabot cannot bump, such as the pinned golangci-lint version in go-ci.yml.",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Bump the pinned golangci-lint version in reusable workflows",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>[^\\s]+)\\s+default: '(?<currentValue>[^']+)'"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["golangci/golangci-lint"],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": "",
+      "commitMessageTopic": "golangci-lint",
+      "labels": ["dependencies", "ci"]
+    }
+  ]
+}
