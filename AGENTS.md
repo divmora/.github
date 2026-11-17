@@ -162,6 +162,22 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 | **`release-please.yml`** | General Release Please versioning and changelog generator. | `uses: divmora/.github/.github/workflows/release-please.yml@main` |
 | **`semantic-pr.yml`** | PR title validation against Conventional Commits. | `uses: divmora/.github/.github/workflows/semantic-pr.yml@main` |
 
+### `go-ci.yml`: pinned golangci-lint
+
+`go-ci.yml` installs a **pinned** golangci-lint release (input `golangci-lint-version`, default set in the workflow), never `latest`. A floating `latest` lets an upstream release break every Go repo's CI with no code change.
+
+- **Upgrades** come as Renovate PRs against this repo (`renovate.json`, regex manager on the `# renovate:` comment in `go-ci.yml`). Before merging one, run the new version against the org's Go repos and fix or override the ones that fail.
+- **Manual bump** (if Renovate is not running): edit the `golangci-lint-version` default in `.github/workflows/go-ci.yml` and open a `ci:` PR.
+- **Per-repo override**: a repo that needs time to migrate can pin its own version:
+  ```yaml
+  jobs:
+    ci:
+      uses: divmora/.github/.github/workflows/go-ci.yml@main
+      with:
+        golangci-lint-version: 'v2.14.0'
+  ```
+- golangci-lint v2 needs a v2-format `.golangci.yml` (`version: "2"`). A v1 config fails with `unsupported version of the configuration`. Because the workflow uses `install-mode: goinstall`, the caller's `go-version` must also meet the release's minimum Go version (v2.15.0 needs Go >= 1.26).
+
 ---
 
 ## 6. Standard Verification Commands Matrix

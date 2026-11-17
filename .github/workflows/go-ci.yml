@@ -7,6 +7,15 @@ on:
         type: string
         required: false
         default: '1.26'
+      golangci-lint-version:
+        description: >-
+          golangci-lint release to install (e.g. v2.15.0). Pinned so a new upstream
+          release cannot break callers without a code change; bumped via Renovate PRs.
+          Callers may override this to stay on an older release while migrating.
+        type: string
+        required: false
+        # renovate: datasource=github-releases depName=golangci/golangci-lint
+        default: 'v2.15.0'
 
 jobs:
   quality:
@@ -27,7 +36,7 @@ jobs:
       - name: Run Linters
         uses: golangci/golangci-lint-action@v9
         with:
-          version: latest
+          version: ${{ inputs.golangci-lint-version }}
           install-mode: goinstall
           working-directory: .
           args: --timeout=5m
