@@ -9,7 +9,8 @@
 ### 🤖 AI Engineering & Autonomous Agents
 
 - **[agent-skills](https://github.com/divmora/agent-skills)**: Canonical registry and harness for production-grade AI engineering skills and plugins adhering to `agentskills.io`.
-- **[code-reviewer-ai-agent](https://github.com/divmora/code-reviewer-ai-agent)**: Intelligent multi-VCS AI code review bot featuring AST scope slicing and anti-hallucination analysis.
+- **[code-review-bot](https://github.com/divmora/code-review-bot)**: AI code review for GitHub, GitLab and Bitbucket with any LLM provider, as a CLI, GitHub Action, GitLab CI job or Bitbucket Pipelines step.
+- **[code-review-console](https://github.com/divmora/code-review-console)**: Self-hosted control plane that runs code-review-bot for every repository, with webhooks, a review queue, Docker and Kubernetes executors and an admin panel.
 - **[jules-ai-agent](https://github.com/divmora/jules-ai-agent)**: Autonomous repository maintenance and AI coding agent for background task execution.
 - **[localharness](https://github.com/divmora/localharness)**: Universal multi-agent orchestration harness and developer desktop GUI for agentic workflows.
 - **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
@@ -46,7 +47,7 @@ Security is fundamental to everything we engineer. If you discover a potential v
 
 ## 🤝 Community, Licensing & Standards
 
-- **[Licensing Policy & FAQ](https://github.com/divmora/.github/blob/main/LICENSING.md)**: Learn about our BSL 1.1 model, non-production evaluation rights, and commercial licensing.
+- **[Licensing Policy & FAQ](https://github.com/divmora/.github/blob/main/LICENSING.md)**: Our Apache 2.0, BSL 1.1 and Elastic License 2.0 tiers, what each allows for free, and commercial licensing.
 - **[Code of Conduct](https://github.com/divmora/.github/blob/main/CODE_OF_CONDUCT.md)**: We are committed to an open, welcoming, and harassment-free community.
 - **[Contributing Guide](https://github.com/divmora/.github/blob/main/CONTRIBUTING.md)**: How to get involved, submit PRs, and follow our Conventional Commits standard.
 - **Commercial & Enterprise Inquiries**: Reach out at **licensing@divmora.com** or visit [divmora.com](https://divmora.com).
