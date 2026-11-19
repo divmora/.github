@@ -1,9 +1,10 @@
 # DIVMORA Technologies Licensing Policy & Templates
 
-**DIVMORA Technologies** maintains a two-tier licensing architecture designed to balance developer freedom, community ecosystem growth, and sustainable enterprise tooling:
+**DIVMORA Technologies** maintains a three-tier licensing architecture designed to balance developer freedom, community ecosystem growth, and sustainable enterprise tooling:
 
 1. **Permissive Open Source (Apache License 2.0):** Applied to developer utilities, adapters, proxies, relays (e.g. `cloudflare-smtp-relay`), SDKs, GitHub Actions, and scaffolding templates where zero-friction community adoption and uninhibited production/commercial use is intended.
 2. **Business Source License 1.1 (BSL 1.1):** Applied to core enterprise platforms, governance systems, and proprietary automation tools where production deployment requires a commercial license (EULA) and converts to Apache 2.0 after three (3) years.
+3. **Elastic License 2.0 (ELv2):** Applied to products with a free core and paid features unlocked by a Divmora license key (e.g. `code-review-console`). The free core is free in every environment, production included; paid features need a license key in every environment, development and CI/CD included. The line between free and paid is drawn by feature, not by environment.
 
 ---
 
@@ -13,6 +14,7 @@
 |---|---|---|---|
 | **Apache License 2.0** *(Permissive Open Source)* | Developer utilities, SMTP/API relays, client SDKs, CLIs, integrations, middleware, and GitHub Actions. | **100% Free** in any environment (production, commercial, internal, homelabs). **No EULA or payment required.** | `cloudflare-smtp-relay`, developer SDKs, action runners. |
 | **BSL 1.1** *(Source-Available)* | Core enterprise platforms, governance bots, security scanning engines, and proprietary cloud orchestrators. | **Free for non-production use** (local dev, staging, QA, CI/CD). **Requires commercial EULA for production deployments.** | `aws-guardduty-archive-bot`, `gitlab-fleet-governor`. |
+| **Elastic License 2.0** *(Source-Available, free core + license keys)* | Products sold by feature: a useful free core plus paid features protected by a Divmora license key ([license-go](https://github.com/divmora/license-go), issued by the license portal). | **Free core: free in any environment**, production included, except as a hosted/managed service for third parties. **Paid features: license key required in every environment** (dev, CI/CD, staging, production). Circumventing the license key is not permitted. Never converts to open source. | `code-review-console`. |
 
 ---
 
@@ -32,6 +34,18 @@ Any project licensed under **Apache License 2.0** (such as `cloudflare-smtp-rela
 - Using the software to manage, audit, or operate live production customer environments.
 - Offering the software (or derivative work) as a paid SaaS, managed service, or hosted offering.
 - Embedding the software into commercial proprietary products.
+
+### What is permitted for free under the Elastic License 2.0?
+- Using, running, modifying and distributing the software's free core, in any environment, including production and commercial use.
+- Reading the source, including the code of paid features, for example for security review.
+
+### What is not permitted under the Elastic License 2.0?
+- Providing the software to third parties as a hosted or managed service that gives them access to a substantial set of its features.
+- Using any paid feature without a valid license key, including in development, testing or CI/CD: moving, changing, disabling or circumventing the license key functionality, or removing or obscuring anything it protects, is prohibited.
+- Altering or removing licensing, copyright or other notices.
+
+### When should a new project use ELv2 instead of BSL 1.1?
+Use ELv2 when the product should be adopted freely (including in production) at a basic level, and sold by **feature**. Use BSL 1.1 when the whole product is sold for **production use** and free use is limited to non-production environments. Do not combine BSL with a separate proprietary license for paid code: ELv2 covers both the free core and the key-protected features in one standard license.
 
 ### How do I obtain a Commercial License?
 Please contact our licensing team at **licensing@divmora.com** or visit **[divmora.com](https://divmora.com)** to discuss licensing, enterprise support tiers, and custom SLAs.
@@ -76,3 +90,15 @@ DISCLAIMER
 
 THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE LICENSED WORK OR THE USE OR OTHER DEALINGS IN THE LICENSED WORK.
 ```
+
+---
+
+## 4. Elastic License 2.0 Repository Setup
+
+For a new ELv2 repository in the **divmora** organization:
+
+1. Copy [`license-templates/ELASTIC-LICENSE-2.0.txt`](license-templates/ELASTIC-LICENSE-2.0.txt) **unchanged** to the repository's root `LICENSE` file. It is the official text from <https://www.elastic.co/licensing/elastic-license>; do not edit it. Put the copyright line (`Copyright <year> DIVMORA Technologies`) in the README's license section, not in `LICENSE`.
+2. Gate every paid feature behind a Divmora license key using [license-go](https://github.com/divmora/license-go), and add the product and its features (modules) to the license portal's product catalog.
+3. In the README, list what is free and what needs a key, and link `LICENSE`. Use the badge `[![License: ELv2](https://img.shields.io/badge/License-Elastic_2.0-blue.svg)](LICENSE)`.
+4. Container images: set `org.opencontainers.image.licenses="Elastic-2.0"` (the SPDX identifier).
+
