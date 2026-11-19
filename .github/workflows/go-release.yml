@@ -24,8 +24,8 @@ on:
         required: false
         default: ''
     secrets:
-      RELEASE_APP_ID:
-        description: "ID (or Client ID) of the DIVMORA Release GitHub App (optional; passed automatically with `secrets: inherit`)."
+      RELEASE_APP_CLIENT_ID:
+        description: "Client ID of the DIVMORA Release GitHub App (optional; passed automatically with `secrets: inherit`)."
         required: false
       RELEASE_APP_PRIVATE_KEY:
         description: "Private key of the DIVMORA Release GitHub App (optional; passed automatically with `secrets: inherit`)."
@@ -40,7 +40,7 @@ jobs:
       pull-requests: write
     env:
       # Secrets cannot be used in `if:`; expose only whether both were passed.
-      HAS_RELEASE_APP: ${{ secrets.RELEASE_APP_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}
+      HAS_RELEASE_APP: ${{ secrets.RELEASE_APP_CLIENT_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created || inputs.force-release }}
       tag_name: ${{ steps.release.outputs.tag_name || inputs.tag-name }}
@@ -56,7 +56,7 @@ jobs:
         if: ${{ !inputs.force-release && env.HAS_RELEASE_APP == 'true' }}
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          client-id: ${{ secrets.RELEASE_APP_ID }}  # App ID or Client ID; both work
+          client-id: ${{ secrets.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
