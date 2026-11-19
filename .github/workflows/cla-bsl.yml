@@ -1,8 +1,17 @@
 name: "CLA Assistant — BSL (Reusable)"
 
-# Enforces CLA-BSL.md on BSL 1.1 repositories using CLA Assistant Lite.
-# Signatures are stored centrally in divmora/cla-signatures, so a contributor
-# signs once for every BSL repository.
+# Enforces a CLA on BSL 1.1 repositories using CLA Assistant Lite, with
+# signatures stored centrally in divmora/cla-signatures.
+#
+# By default it enforces the org-wide CLA-BSL.md, and one signature covers
+# every repository that uses it (signatures/bsl/v1.json).
+#
+# A repository may use its own CLA instead by setting `cla-document`. Its
+# signatures are then kept separately in signatures/repos/<repo>/v1.json, so
+# signing the org CLA never counts as signing a repo-specific one (or vice
+# versa). When a repo-specific CLA changes materially, bump the version by
+# setting `signatures-path` (e.g. signatures/repos/<repo>/v2.json) so
+# contributors sign again.
 #
 # Callers must trigger on `pull_request_target` and `issue_comment`, grant the
 # permissions below, and pass the CLA_PAT org secret (fine-grained PAT with
@@ -11,6 +20,19 @@ name: "CLA Assistant — BSL (Reusable)"
 
 on:
   workflow_call:
+    inputs:
+      cla-document:
+        description: >-
+          URL of a repository-specific CLA (e.g. https://github.com/divmora/<repo>/blob/main/CLA.md).
+          Leave empty to use the org-wide CLA-BSL.md.
+        type: string
+        default: ""
+      signatures-path:
+        description: >-
+          Override the signatures file in divmora/cla-signatures. Defaults to
+          signatures/bsl/v1.json, or signatures/repos/<repo>/v1.json when cla-document is set.
+        type: string
+        default: ""
     secrets:
       CLA_PAT:
         required: true
@@ -41,12 +63,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_PAT }}
         with:
-          path-to-document: https://github.com/divmora/.github/blob/main/CLA-BSL.md
+          path-to-document: ${{ inputs.cla-document || 'https://github.com/divmora/.github/blob/main/CLA-BSL.md' }}
           remote-organization-name: divmora
           remote-repository-name: cla-signatures
           branch: main
-          path-to-signatures: signatures/bsl/v1.json
+          path-to-signatures: >-
+            ${{ inputs.signatures-path
+            || (inputs.cla-document && format('signatures/repos/{0}/v1.json', github.event.repository.name))
+            || 'signatures/bsl/v1.json' }}
           allowlist: dependabot[bot],renovate[bot],github-actions[bot]
           lock-pullrequest-aftermerge: false
-          signed-commit-message: "chore: $contributorName signed the BSL CLA in $owner/$repo#$pullRequestNo"
-          create-file-commit-message: "chore: create BSL CLA signatures file"
+          signed-commit-message: "chore: $contributorName signed the CLA in $owner/$repo#$pullRequestNo"
+          create-file-commit-message: "chore: create CLA signatures file"
