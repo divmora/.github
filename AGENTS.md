@@ -193,6 +193,16 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 | **`semantic-pr.yml`** | PR title validation against Conventional Commits. | `uses: divmora/.github/.github/workflows/semantic-pr.yml@main` |
 | **`cla-bsl.yml`** | Repo-based CLA (CLA Assistant Lite, [DIVMORA fork](https://github.com/divmora/cla-assistant-action)) for Tier 2/3 repos; optional `cla-document` for a repo-specific CLA. Requires the `CLA required` ruleset. | `uses: divmora/.github/.github/workflows/cla-bsl.yml@main` |
 
+### Release PRs: DIVMORA Release GitHub App
+
+`go-release.yml` and `release-please.yml` open release PRs with a short-lived token from the **`divmora-release`** GitHub App, so CI and the CLA check run on them. PRs opened with `GITHUB_TOKEN` trigger no workflows, and the required `cla / CLA check` would never report. **Tags and GitHub releases stay on `GITHUB_TOKEN`** on purpose, so tag-triggered workflows behave exactly as before.
+
+- **App (org-owned, private):** webhook off; repository permissions **Contents: Read and write** and **Pull requests: Read and write** only; installed on selected repositories only (repos using release-please). Org owners manage it.
+- **Config:** org secrets `RELEASE_APP_CLIENT_ID` and `RELEASE_APP_PRIVATE_KEY`, scoped to the repositories that use release-please. Never paste the key anywhere else; rotate it yearly and delete downloaded `.pem` files.
+- **Token:** minted per run by `actions/create-github-app-token` (pinned by SHA), limited to the current repository and those two permissions, revoked at job end. Used only in the release job (push to `main`), never in PR-triggered workflows.
+- **Enable for a repo:** install the app on it, add it to both secrets' repository access, and make sure its caller passes `secrets: inherit`. Without both secrets, the workflow falls back to `GITHUB_TOKEN` (release PRs then need the admin bypass to merge in CLA repos).
+- `divmora-release[bot]` is on the CLA allowlist.
+
 ### `go-ci.yml`: pinned golangci-lint
 
 `go-ci.yml` installs a **pinned** golangci-lint release (input `golangci-lint-version`, default set in the workflow), never `latest`. A floating `latest` lets an upstream release break every Go repo's CI with no code change.
