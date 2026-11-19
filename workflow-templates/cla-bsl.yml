@@ -15,5 +15,9 @@ permissions:
 jobs:
   cla:
     uses: divmora/.github/.github/workflows/cla-bsl.yml@main
+    # Optional: use this repository's own CLA instead of the org-wide CLA-BSL.md.
+    # Signatures for it are stored separately from the org CLA.
+    # with:
+    #   cla-document: https://github.com/divmora/${{ github.event.repository.name }}/blob/main/CLA.md
     secrets:
       CLA_PAT: ${{ secrets.CLA_PAT }}
