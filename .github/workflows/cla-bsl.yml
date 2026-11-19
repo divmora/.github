@@ -78,7 +78,7 @@ jobs:
             ${{ inputs.signatures-path
             || (inputs.cla-document && format('signatures/repos/{0}/v1.json', github.event.repository.name))
             || 'signatures/bsl/v1.json' }}
-          allowlist: dependabot[bot],renovate[bot],github-actions[bot]
+          allowlist: dependabot[bot],renovate[bot],github-actions[bot],divmora-release[bot]
           lock-pullrequest-aftermerge: false
           signed-commit-message: "chore: $contributorName signed the CLA in $owner/$repo#$pullRequestNo"
           create-file-commit-message: "chore: create CLA signatures file"

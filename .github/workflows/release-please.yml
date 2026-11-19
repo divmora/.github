@@ -21,6 +21,10 @@ on:
       version:
         description: "The version string of the created release"
         value: ${{ jobs.release-please.outputs.version }}
+    secrets:
+      RELEASE_APP_PRIVATE_KEY:
+        description: "Private key of the DIVMORA Release GitHub App (optional; passed automatically with `secrets: inherit`)."
+        required: false
 
 jobs:
   release-please:
@@ -29,14 +33,46 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      # Secrets cannot be used in `if:`; expose only whether the key was passed.
+      HAS_RELEASE_APP_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY != '' }}
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
     steps:
-      - name: Run Release Please Action
+      # Release PRs are opened with a short-lived token from the DIVMORA Release
+      # GitHub App so that CI and the CLA check run on them (PRs opened with
+      # GITHUB_TOKEN trigger no workflows). The token is limited to this
+      # repository and to contents + pull-requests, and is revoked when the job
+      # ends. Without the app variable/secret this falls back to GITHUB_TOKEN.
+      - name: Create release-PR token (DIVMORA Release app)
+        id: app-token
+        if: ${{ vars.RELEASE_APP_CLIENT_ID != '' && env.HAS_RELEASE_APP_KEY == 'true' }}
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      # Tags and GitHub releases stay on GITHUB_TOKEN on purpose: tags pushed by
+      # GITHUB_TOKEN do not trigger tag-based workflows, so release behaviour
+      # is unchanged.
+      - name: Create GitHub releases
         id: release
         uses: googleapis/release-please-action@v5
         with:
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file }}
+          skip-github-pull-request: true
+
+      - name: Open or update release PR
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ steps.app-token.outputs.token || github.token }}
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file }}
+          skip-github-release: true
