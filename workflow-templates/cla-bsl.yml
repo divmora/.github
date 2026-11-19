@@ -1,0 +1,19 @@
+name: CLA
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    uses: divmora/.github/.github/workflows/cla-bsl.yml@main
+    secrets:
+      CLA_PAT: ${{ secrets.CLA_PAT }}
