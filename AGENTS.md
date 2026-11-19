@@ -28,9 +28,9 @@ All commits and Pull Request titles **MUST** strictly follow the [Conventional C
 
 ---
 
-## 2. Licensing Policy (BSL 1.1 & Apache 2.0)
+## 2. Licensing Policy (Apache 2.0, BSL 1.1 & ELv2)
 
-DIVMORA operates a two-tier licensing model:
+DIVMORA operates a three-tier licensing model:
 1. **Tier 1: Permissive Open Source (Apache License 2.0)**: For developer utilities, relays/proxies (e.g. `cloudflare-smtp-relay`), client SDKs, CLIs, integrations, and GitHub Actions. Free for use in any environment without requiring a commercial license.
    - Badge: `[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)`
 2. **Tier 2: Source-Available (Business Source License 1.1)**: Applied to core enterprise platforms, governance bots, security scanning engines, and proprietary cloud orchestrators:
@@ -41,6 +41,9 @@ DIVMORA operates a two-tier licensing model:
      - `Additional Use Grant`: Free for non-production use (development, staging, QA, CI/CD, evaluation, proof-of-concept). Production deployments and commercial services require an enterprise commercial license (EULA) from DIVMORA Technologies (`licensing@divmora.com`).
      - `Change Date`: Three (3) years from the release date of the specific version.
      - `Change License`: Apache License, Version 2.0.
+3. **Tier 3: Free core + license keys (Elastic License 2.0)**: For products sold by feature (e.g. `code-review-console`): the free core is free in every environment, production included, and paid features need a Divmora license key ([license-go](https://github.com/divmora/license-go)) in every environment, development and CI/CD included. Do not combine BSL with a separate proprietary license for paid code.
+   - Badge: `[![License: ELv2](https://img.shields.io/badge/License-Elastic_2.0-blue.svg)](LICENSE)`
+   - `LICENSE`: copy `license-templates/ELASTIC-LICENSE-2.0.txt` from this repo **unchanged**; put the copyright line in the README.
 - **Reference:** See [LICENSING.md](https://github.com/divmora/.github/blob/main/LICENSING.md) for the authoritative license template and policy.
 
 ---
@@ -50,7 +53,7 @@ DIVMORA operates a two-tier licensing model:
 When creating or standardizing a repository in the `divmora` organization, ensure the following files and configurations exist:
 
 ### Essential Files
-- [ ] **`LICENSE`**: Parameterized BSL 1.1 license file.
+- [ ] **`LICENSE`**: Apache 2.0, the parameterized BSL 1.1 file, or the unchanged ELv2 text, per the tier (see section 2).
 - [ ] **`README.md`**: Comprehensive overview, feature list, configuration parameters, IAM policies (if cloud-related), and License summary.
 - [ ] **`AGENTS.md`**: Project-specific architecture, dry-run safety guarantees, and domain logic notes.
 - [ ] **`ROADMAP.md`**: Living product roadmap tracking future capabilities, optimizations, and technical debt (pruned upon completion).
@@ -77,6 +80,7 @@ Every repository `README.md` must feature standard status badges right below the
 - **License:**
   - BSL 1.1 (Tier 2): `[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://github.com/divmora/.github/blob/main/LICENSING.md)`
   - Apache 2.0 (Tier 1): `[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)`
+  - ELv2 (Tier 3): `[![License: ELv2](https://img.shields.io/badge/License-Elastic_2.0-blue.svg)](LICENSE)`
 - **CI/CD Status:** `[![CI/CD](https://github.com/divmora/<repo-name>/actions/workflows/ci.yml/badge.svg)](https://github.com/divmora/<repo-name>/actions)`
 - **Language Version:**
   - Go: `[![Go Version](https://img.shields.io/github/go-mod/go-version/divmora/<repo-name>)](go.mod)`
