@@ -198,9 +198,9 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 `go-release.yml` and `release-please.yml` open release PRs with a short-lived token from the **`divmora-release`** GitHub App, so CI and the CLA check run on them. PRs opened with `GITHUB_TOKEN` trigger no workflows, and the required `cla / CLA check` would never report. **Tags and GitHub releases stay on `GITHUB_TOKEN`** on purpose, so tag-triggered workflows behave exactly as before.
 
 - **App (org-owned, private):** webhook off; repository permissions **Contents: Read and write** and **Pull requests: Read and write** only; installed on selected repositories only (repos using release-please). Org owners manage it.
-- **Config:** org variable `RELEASE_APP_CLIENT_ID` and org secret `RELEASE_APP_PRIVATE_KEY`, both scoped to selected repositories. Never paste the key anywhere else; rotate it yearly and delete downloaded `.pem` files.
+- **Config:** org secrets `RELEASE_APP_ID` (App ID or Client ID) and `RELEASE_APP_PRIVATE_KEY`, scoped to the repositories that use release-please. Never paste the key anywhere else; rotate it yearly and delete downloaded `.pem` files.
 - **Token:** minted per run by `actions/create-github-app-token` (pinned by SHA), limited to the current repository and those two permissions, revoked at job end. Used only in the release job (push to `main`), never in PR-triggered workflows.
-- **Enable for a repo:** install the app on it, add it to the variable's and secret's repository access, and make sure its caller passes `secrets: inherit`. Without these, the workflow falls back to `GITHUB_TOKEN` (release PRs then need the admin bypass to merge in CLA repos).
+- **Enable for a repo:** install the app on it, add it to both secrets' repository access, and make sure its caller passes `secrets: inherit`. Without both secrets, the workflow falls back to `GITHUB_TOKEN` (release PRs then need the admin bypass to merge in CLA repos).
 - `divmora-release[bot]` is on the CLA allowlist.
 
 ### `go-ci.yml`: pinned golangci-lint

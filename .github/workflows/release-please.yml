@@ -22,6 +22,9 @@ on:
         description: "The version string of the created release"
         value: ${{ jobs.release-please.outputs.version }}
     secrets:
+      RELEASE_APP_ID:
+        description: "ID (or Client ID) of the DIVMORA Release GitHub App (optional; passed automatically with `secrets: inherit`)."
+        required: false
       RELEASE_APP_PRIVATE_KEY:
         description: "Private key of the DIVMORA Release GitHub App (optional; passed automatically with `secrets: inherit`)."
         required: false
@@ -34,8 +37,8 @@ jobs:
       contents: write
       pull-requests: write
     env:
-      # Secrets cannot be used in `if:`; expose only whether the key was passed.
-      HAS_RELEASE_APP_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY != '' }}
+      # Secrets cannot be used in `if:`; expose only whether both were passed.
+      HAS_RELEASE_APP: ${{ secrets.RELEASE_APP_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
@@ -45,13 +48,13 @@ jobs:
       # GitHub App so that CI and the CLA check run on them (PRs opened with
       # GITHUB_TOKEN trigger no workflows). The token is limited to this
       # repository and to contents + pull-requests, and is revoked when the job
-      # ends. Without the app variable/secret this falls back to GITHUB_TOKEN.
+      # ends. Without the app secrets this falls back to GITHUB_TOKEN.
       - name: Create release-PR token (DIVMORA Release app)
         id: app-token
-        if: ${{ vars.RELEASE_APP_CLIENT_ID != '' && env.HAS_RELEASE_APP_KEY == 'true' }}
+        if: ${{ env.HAS_RELEASE_APP == 'true' }}
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          client-id: ${{ secrets.RELEASE_APP_ID }}  # App ID or Client ID; both work
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
