@@ -58,7 +58,7 @@ jobs:
       statuses: write
     steps:
       # Does not check out or run PR code, so pull_request_target is safe here.
-      - uses: contributor-assistant/github-action@v2.6.1
+      - uses: divmora/cla-assistant-action@c67ff7c883f3e423b6462ff98ebcf4ed0e088edd # v3.0.0 (DIVMORA fork, Node.js 24)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_PAT }}
