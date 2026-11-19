@@ -38,6 +38,7 @@ When standardizing an existing repository or scaffolding a new one, apply the fo
         ├── ci.yml                # Calls divmora/.github/.github/workflows/{go-ci,node-ci,python-ci,cfn-ci}.yml@main
         ├── docker-publish.yml    # Calls divmora/.github/.github/workflows/docker-publish.yml@main
         ├── pages.yml             # Calls divmora/.github/.github/workflows/pages-deploy.yml@main (if documentation/website)
+        ├── cla.yml               # Tier 2/3 public repos: calls divmora/.github/.github/workflows/cla-bsl.yml@main (+ mandatory `CLA required` ruleset)
         ├── release-please.yml    # Calls divmora/.github/.github/workflows/{go-release,release-please}.yml@main
         └── semantic-pull-request.yml # Calls divmora/.github/.github/workflows/semantic-pr.yml@main
 ```
@@ -610,3 +611,77 @@ When the new repository is published to GitHub:
 - Add the project to the **🛠️ Open & Source-Available Tools** section within its respective functional category with a concise 1-line description.
 - **Alphabetical Order**: Maintain strict alphabetical order (A–Z by repository/project name within each category).
 
+
+
+---
+
+## 11. Contributor License Agreement (CLA) Enforcement
+
+Apply to **public** repositories only. Private repositories get no CLA. See `AGENTS.md` section 2, "Contributor License Agreements (CLA)", for the policy.
+
+### Tier 1 (Apache 2.0): cla-assistant.io
+Link the repository on [cla-assistant.io](https://cla-assistant.io) with the Apache CLA gist. Use the allowlist `dependabot[bot],renovate[bot],github-actions[bot]`, exempt the `divmora` org, and set the privacy policy to `https://divmora.com/#/privacy`. This step is manual (browser); flag it to the user.
+
+### Tier 2 (BSL 1.1) and Tier 3 (ELv2 / repo-specific CLA): repo-based, required check MANDATORY
+
+1. **`.github/workflows/cla.yml`:**
+```yaml
+name: CLA
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    uses: divmora/.github/.github/workflows/cla-bsl.yml@main
+    # Tier 3 / repo-specific CLA only (CLA.md in this repo, same signing phrase):
+    # with:
+    #   cla-document: https://github.com/divmora/<repo-name>/blob/main/CLA.md
+    secrets:
+      CLA_PAT: ${{ secrets.CLA_PAT }}
+```
+
+2. **`CLA_PAT` access:** the org secret must include the repo. Ask the user to add it (org settings → Secrets → Actions → `CLA_PAT`). Verify with:
+```bash
+gh api repos/divmora/<repo-name>/actions/organization-secrets -q '.secrets[].name' | grep -x CLA_PAT
+```
+
+3. **Mandatory `CLA required` ruleset** (keep it separate from the `Default` ruleset):
+```bash
+gh api -X POST repos/divmora/<repo-name>/rulesets --input - <<'EOF'
+{
+  "name": "CLA required",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": { "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] } },
+  "bypass_actors": [
+    { "actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always" }
+  ],
+  "rules": [
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": false,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [ { "context": "cla / CLA check", "integration_id": 15368 } ]
+      }
+    }
+  ]
+}
+EOF
+
+# Verify (expects: CLA required active)
+gh api repos/divmora/<repo-name>/rulesets -q '.[] | select(.name=="CLA required") | "\(.name) \(.enforcement)"'
+```
+The admin bypass is required, not optional: release-please PRs are opened with `GITHUB_TOKEN` and trigger no workflows, so without it every release PR would be blocked.
+
+4. **Verify:** open a draft PR, confirm the `cla / CLA check` run and bot comment appear, then close it.

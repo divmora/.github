@@ -46,11 +46,15 @@ jobs:
   cla:
     name: CLA check
     runs-on: ubuntu-latest
+    # Dependabot-triggered runs cannot read Actions secrets (CLA_PAT), so skip
+    # them; a skipped job satisfies a required status check. A human pushing to
+    # a Dependabot PR is the actor of that run, so they are still checked.
     if: >-
-      github.event_name == 'pull_request_target' ||
+      github.actor != 'dependabot[bot]' &&
+      (github.event_name == 'pull_request_target' ||
       (github.event.issue.pull_request &&
         (github.event.comment.body == 'recheck' ||
-         github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA'))
+         github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA')))
     permissions:
       actions: write
       contents: read
