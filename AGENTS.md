@@ -46,6 +46,31 @@ DIVMORA operates a three-tier licensing model:
    - `LICENSE`: copy `license-templates/ELASTIC-LICENSE-2.0.txt` from this repo **unchanged**; put the copyright line in the README.
 - **Reference:** See [LICENSING.md](https://github.com/divmora/.github/blob/main/LICENSING.md) for the authoritative license template and policy.
 
+### Contributor License Agreements (CLA)
+
+Every **public** repository enforces a CLA on pull requests. The tool depends on the license tier:
+
+| Tier | CLA document | Tool | Status check |
+|:---|:---|:---|:---|
+| **Tier 1: Apache 2.0** | [`CLA-APACHE.md`](CLA-APACHE.md) (linked from a gist) | [cla-assistant.io](https://cla-assistant.io), linked per repository | `license/cla` |
+| **Tier 2: BSL 1.1** | [`CLA-BSL.md`](CLA-BSL.md) (org-wide; one signature covers every BSL repo) | Repo-based: `cla-bsl.yml` reusable workflow, signatures in `divmora/cla-signatures` | `cla / CLA check` |
+| **Tier 3: ELv2**, or any repo with its own CLA | The repository's own `CLA.md` (e.g. `code-review-console`) | Repo-based: `cla-bsl.yml` with `cla-document:`; signatures kept separately under `signatures/repos/<repo>/` | `cla / CLA check` |
+
+**Repo-based CLA (Tier 2 & 3): the required check is MANDATORY.** A repo that uses the repo-based CLA must have all of the following, or it is not compliant:
+1. `.github/workflows/cla.yml`, copied from [`workflow-templates/cla-bsl.yml`](workflow-templates/cla-bsl.yml). For a repo-specific CLA, add `with: cla-document: https://github.com/divmora/<repo>/blob/main/CLA.md`. The CLA must keep the signing phrase `I have read the CLA Document and I hereby sign the CLA`.
+2. The repo added to the `CLA_PAT` org secret's repository access.
+3. A branch ruleset named **`CLA required`** on the default branch:
+   - required status check `cla / CLA check` from GitHub Actions (`integration_id` 15368)
+   - bypass for the **Repository admin** role (`actor_id` 5, `RepositoryRole`), mode `always`. This is needed because release-please opens PRs with `GITHUB_TOKEN`, which triggers no workflows, so admins must merge release PRs (and push directly to `main`) via the bypass.
+
+   See the standardizer skill (section 11) for the exact `gh api` command. Do not add the check to the `Default` ruleset; keep it separate.
+
+Rules:
+- Callers must use `pull_request_target` and `issue_comment` and must never check out PR code.
+- Dependabot PRs are skipped automatically (the skip counts as a pass). Every other contributor, DIVMORA staff included, signs once.
+- A material change to a repo-specific CLA means bumping its `signatures-path` to the next version (`v2.json`) so contributors sign again.
+- **Private repositories** do not use a CLA. Outside contributors (contractors) sign a contractor agreement with IP assignment before they get access.
+
 ---
 
 ## 3. Standard Repository Structure Checklist
@@ -69,6 +94,7 @@ When creating or standardizing a repository in the `divmora` organization, ensur
 - [ ] **`.goreleaser.yaml`**: Multi-architecture binary compilation and checksum generation (for Go projects).
 - [ ] **`.github/workflows/release-please.yml`**: Integrated Release Please automation (calling org reusable workflow).
 - [ ] **`.github/workflows/semantic-pull-request.yml`**: Semantic PR title linting (calling org reusable workflow).
+- [ ] **CLA enforcement** (public repos, see section 2): Tier 1 → cla-assistant.io linked with the Apache gist. Tier 2/3 → `.github/workflows/cla.yml` **plus the mandatory `CLA required` ruleset** requiring `cla / CLA check`, and the repo added to `CLA_PAT`.
 - [ ] **`.github/workflows/ci.yml`**: Continuous Integration (calling `go-ci.yml`, `node-ci.yml`, or `python-ci.yml`).
 - [ ] **`.github/workflows/docker-publish.yml`**: Container image compilation and GHCR publishing (if containerized).
 - [ ] **`.github/dependabot.yml`**: Scheduled weekly dependency updates (mandatory per repository; version updates are not inherited from the org `.github` repo).
@@ -165,6 +191,7 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 | **`go-release.yml`** | Release Please + GoReleaser binary release automation for Go. | `uses: divmora/.github/.github/workflows/go-release.yml@main` |
 | **`release-please.yml`** | General Release Please versioning and changelog generator. | `uses: divmora/.github/.github/workflows/release-please.yml@main` |
 | **`semantic-pr.yml`** | PR title validation against Conventional Commits. | `uses: divmora/.github/.github/workflows/semantic-pr.yml@main` |
+| **`cla-bsl.yml`** | Repo-based CLA (CLA Assistant Lite, [DIVMORA fork](https://github.com/divmora/cla-assistant-action)) for Tier 2/3 repos; optional `cla-document` for a repo-specific CLA. Requires the `CLA required` ruleset. | `uses: divmora/.github/.github/workflows/cla-bsl.yml@main` |
 
 ### `go-ci.yml`: pinned golangci-lint
 
