@@ -1,0 +1,6 @@
+{
+  "name": "DIVMORA CLA (BSL 1.1)",
+  "description": "Require contributors to sign CLA-BSL.md before a pull request can merge. For BSL 1.1 repositories only.",
+  "iconName": "octicon law",
+  "categories": ["Automation"]
+}
