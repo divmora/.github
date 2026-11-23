@@ -16,6 +16,26 @@ on:
         required: false
         # renovate: datasource=github-releases depName=golangci/golangci-lint
         default: 'v2.15.0'
+      node-version:
+        description: >-
+          Set up Node.js (e.g. '24') before the Go checks, for a pre-build-command
+          that needs it. Empty: no Node.
+        type: string
+        required: false
+        default: ''
+      node-cache-dependency-path:
+        description: "Lockfile for the npm cache (e.g. web/package-lock.json). Empty: no cache."
+        type: string
+        required: false
+        default: ''
+      pre-build-command:
+        description: >-
+          Command run after checkout, before lint and tests: for code the Go build
+          needs but that isn't committed, e.g. a web UI it embeds (make web).
+          Empty: nothing.
+        type: string
+        required: false
+        default: ''
 
 jobs:
   quality:
@@ -32,6 +52,20 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
           cache: true
+
+      - name: Set up Node.js
+        if: inputs.node-version != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.node-cache-dependency-path != '' && 'npm' || '' }}
+          cache-dependency-path: ${{ inputs.node-cache-dependency-path }}
+
+      - name: Pre-build
+        if: inputs.pre-build-command != ''
+        env:
+          PRE_BUILD_COMMAND: ${{ inputs.pre-build-command }}
+        run: bash -euo pipefail -c "$PRE_BUILD_COMMAND"
 
       - name: Run Linters
         uses: golangci/golangci-lint-action@v9

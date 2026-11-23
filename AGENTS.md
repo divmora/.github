@@ -203,6 +203,10 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 - **Enable for a repo:** install the app on it, add it to both secrets' repository access, and make sure its caller passes `secrets: inherit`. Without both secrets, the workflow falls back to `GITHUB_TOKEN` (release PRs then need the admin bypass to merge in CLA repos).
 - `divmora-release[bot]` is on the CLA allowlist.
 
+### `go-ci.yml` and `docker-publish.yml`: a build step before the Go checks
+
+A repo whose Go build needs files that aren't committed (for example a web UI the binary embeds with `go:embed`) passes `node-version` (with `node-cache-dependency-path` for the npm cache) and `pre-build-command`, e.g. `node-version: '24'`, `node-cache-dependency-path: web/package-lock.json`, `pre-build-command: make web`. They run after Go is set up, before lint and tests, in `go-ci.yml` and in `docker-publish.yml`'s quality job. All three default to empty: nothing changes for other repos.
+
 ### `go-ci.yml`: pinned golangci-lint
 
 `go-ci.yml` installs a **pinned** golangci-lint release (input `golangci-lint-version`, default set in the workflow), never `latest`. A floating `latest` lets an upstream release break every Go repo's CI with no code change.
