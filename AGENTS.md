@@ -195,7 +195,12 @@ All repositories in `divmora` should call the centralized reusable workflows hos
 
 ### Release PRs: DIVMORA Release GitHub App
 
-`go-release.yml` and `release-please.yml` open release PRs with a short-lived token from the **`divmora-release`** GitHub App, so CI and the CLA check run on them. PRs opened with `GITHUB_TOKEN` trigger no workflows, and the required `cla / CLA check` would never report. **Tags and GitHub releases stay on `GITHUB_TOKEN`** on purpose, so tag-triggered workflows behave exactly as before.
+`go-release.yml` and `release-please.yml` create release tags, GitHub releases and release PRs with a short-lived token from the **`divmora-release`** GitHub App. Anything created with `GITHUB_TOKEN` triggers no workflows, so with the app token:
+
+- **Release tags start tag-triggered workflows.** A repo's `docker-publish.yml` (`on: push: tags: v*`) builds and pushes the `X.Y.Z` and `latest` images on its own; no manual `workflow_dispatch` on the tag.
+- **Release PRs run CI and the CLA check.** Otherwise the required `cla / CLA check` would never report.
+
+Without the app secrets the workflows fall back to `GITHUB_TOKEN`, and tag-triggered workflows must be started by hand (`gh workflow run docker-publish.yml --ref vX.Y.Z`). A repo whose tag-triggered workflow should *not* run on every release must change its trigger.
 
 - **App (org-owned, private):** webhook off; repository permissions **Contents: Read and write** and **Pull requests: Read and write** only; installed on selected repositories only (repos using release-please). Org owners manage it.
 - **Config:** org secrets `RELEASE_APP_CLIENT_ID` and `RELEASE_APP_PRIVATE_KEY`, scoped to the repositories that use release-please. Never paste the key anywhere else; rotate it yearly and delete downloaded `.pem` files.
