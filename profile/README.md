@@ -8,7 +8,7 @@
 
 | | What you can do for free | What needs a licence | Projects |
 | :--- | :--- | :--- | :--- |
-| **Open source** (Apache 2.0) | Everything, in any environment, including production and commercial use | Nothing. Paid setup and support are offered for some projects | code-review-bot, owlflow, functionless-url-shortener, show-and-tell, and the other Apache 2.0 repositories below |
+| **Open source** (Apache 2.0) | Everything, in any environment, including production and commercial use | Nothing. Paid setup and support are offered for some projects | code-review-bot, zenith, owlflow, functionless-url-shortener, show-and-tell, and the other Apache 2.0 repositories below |
 | **Free core + paid features** (Elastic License 2.0) | Run the core in any environment, production included | Paid features need a Divmora licence key in every environment | code-review-console |
 | **Commercial licence for production** (BSL 1.1) | Development, testing, CI and evaluation | Production use; each release becomes Apache 2.0 after three years | gitlab-fleet-governor, otel-aws-log-processor, aws-das-processor, and the other BSL 1.1 repositories below |
 
@@ -25,7 +25,7 @@ Each project below is tagged with its licence. Details: [Licensing Policy & FAQ]
 - **[code-review-console](https://github.com/divmora/code-review-console)** · *ELv2, free core + paid features* · [website](https://divmora.github.io/code-review-console/): Self-hosted control plane that runs code-review-bot for every repository, with webhooks, a review queue, Docker and Kubernetes executors and an admin panel.
 - **[jules-ai-agent](https://github.com/divmora/jules-ai-agent)** · *Apache 2.0*: Autonomous repository maintenance and AI coding agent for background task execution.
 - **[localharness](https://github.com/divmora/localharness)** · *Apache 2.0*: Universal multi-agent orchestration harness and developer desktop GUI for agentic workflows.
-- **[zenith](https://github.com/divmora/zenith)**: Enterprise unified AI developer platform, orchestration engine, and multi-provider code assistant.
+- **[zenith](https://github.com/divmora/zenith)** · *Apache 2.0* · [website](https://divmora.github.io/zenith/): Autonomous coding agent: give it a task and a repository, and it plans, edits, runs the project's tests and opens a pull request on GitHub or GitLab, with any LLM provider.
 
 ### 🛡️ Cloud Governance & Security Automation
 
